@@ -162,6 +162,28 @@ Build profiles are defined in `eas.json`:
 
 ---
 
+## Continuous deployment (Vercel)
+
+This repository includes a GitHub Actions workflow that builds the Expo web output and deploys it to Vercel on pushes to `main`.
+
+What to configure in GitHub:
+
+1. Go to the repository → Settings → Secrets → Actions and add these secrets:
+    - `VERCEL_TOKEN` — your Vercel personal token (https://vercel.com/account/tokens)
+    - `VERCEL_ORG_ID` — Vercel organization ID (found in your Vercel project settings)
+    - `VERCEL_PROJECT_ID` — Vercel project ID (found in your Vercel project settings)
+
+2. Connect the repository in the Vercel dashboard (https://vercel.com/new) and create a project if you haven't already. You can also use the Vercel UI to configure the build output if needed.
+
+What the workflow does:
+
+- Installs dependencies with `npm ci`.
+- Runs `npx expo export:web --output web-build` to produce a static web bundle.
+- Uses `amondnet/vercel-action` to upload and deploy the `web-build` output to your Vercel project.
+
+After you add the three secrets and push to `main`, the workflow will run and Vercel will publish the site. You can view the deployment logs in the repository's Actions tab.
+
+
 ## License
 
 Private — all rights reserved.
