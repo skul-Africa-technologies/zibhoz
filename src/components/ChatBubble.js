@@ -6,7 +6,7 @@ export default function ChatBubble({ role, text }) {
   const isUser = role === "user";
   return (
     <View style={[styles.bubble, isUser ? styles.user : styles.ai]}>
-      <Text style={styles.role}>{isUser ? "YOU" : "AI"}</Text>
+      <Text style={[styles.role, isUser && styles.roleUser]}>{isUser ? "YOU" : "ZIBHOZ AI"}</Text>
       <Text style={styles.text}>{text}</Text>
     </View>
   );
@@ -14,30 +14,36 @@ export default function ChatBubble({ role, text }) {
 
 const styles = StyleSheet.create({
   bubble: {
-    marginBottom: 12,
-    padding: 14,
+    padding: 16,
     borderRadius: 18,
     maxWidth: "86%",
     borderWidth: 1,
-    borderColor: colors.border,
+    gap: 6,
   },
   user: {
-    backgroundColor: "rgba(255,138,61,0.18)",
+    backgroundColor: colors.primaryDim,
+    borderColor: colors.primaryBorder,
     alignSelf: "flex-end",
   },
   ai: {
     backgroundColor: colors.surfaceAlt,
+    borderColor: colors.border,
     alignSelf: "flex-start",
   },
   role: {
     color: colors.textMuted,
     fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1,
-    marginBottom: 6,
+    fontWeight: "900",
+    letterSpacing: 1.2,
+  },
+  roleUser: {
+    color: colors.primary,
   },
   text: {
     color: colors.textPrimary,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: "500",
   },
 });
+
