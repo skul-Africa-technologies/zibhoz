@@ -5,17 +5,20 @@ import colors from "../theme/colors";
 export default function TabBar({ tabs, activeTab, onTabChange }) {
   return (
     <View style={styles.container}>
-      {tabs.map((tab) => (
-        <Pressable
-          key={tab}
-          onPress={() => onTabChange(tab)}
-          style={[styles.tabButton, activeTab === tab && styles.activeTabButton]}
-        >
-          <Text style={[styles.tab, activeTab === tab && styles.activeTab]}>
-            {tab.toUpperCase()}
-          </Text>
-        </Pressable>
-      ))}
+      {tabs.map((tab) => {
+        const isActive = activeTab === tab;
+        return (
+          <Pressable
+            key={tab}
+            onPress={() => onTabChange(tab)}
+            style={[styles.tabButton, isActive && styles.activeTabButton]}
+          >
+            <Text style={[styles.tab, isActive && styles.activeTab]}>
+              {tab.toUpperCase()}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
@@ -23,7 +26,7 @@ export default function TabBar({ tabs, activeTab, onTabChange }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    gap: 10,
+    gap: 6,
     padding: 6,
     borderRadius: 18,
     backgroundColor: colors.surface,
@@ -35,12 +38,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
-    borderRadius: 14,
+    borderRadius: 13,
   },
   activeTabButton: {
-    backgroundColor: colors.surfaceElevated,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
+    backgroundColor: colors.primary,
   },
   tab: {
     color: colors.textMuted,
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   activeTab: {
-    color: colors.textPrimary,
+    color: colors.textOnYellow,
   },
 });
+
