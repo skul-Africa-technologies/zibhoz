@@ -6,6 +6,7 @@ import colors from "../theme/colors";
 export default function MicButton({ onPress, voiceState = "idle" }) {
   const pulse = useRef(new Animated.Value(1)).current;
   const outerPulse = useRef(new Animated.Value(1)).current;
+  const ring2Pulse = useRef(new Animated.Value(1)).current;
 
   const isListening = voiceState === "listening";
   const isProcessing = voiceState === "processing";
@@ -13,45 +14,53 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
   const isActive = isListening || isSpeaking;
 
   useEffect(() => {
-    let animation;
+    let anim1, anim2, anim3;
     if (isListening) {
-      animation = Animated.loop(
+      anim1 = Animated.loop(
         Animated.sequence([
-          Animated.timing(pulse, { toValue: 1.12, duration: 600, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1.1, duration: 600, useNativeDriver: true }),
           Animated.timing(pulse, { toValue: 1, duration: 600, useNativeDriver: true }),
         ])
       );
-      const outerAnim = Animated.loop(
+      anim2 = Animated.loop(
         Animated.sequence([
-          Animated.timing(outerPulse, { toValue: 1.35, duration: 900, useNativeDriver: true }),
-          Animated.timing(outerPulse, { toValue: 1, duration: 900, useNativeDriver: true }),
+          Animated.timing(outerPulse, { toValue: 1.4, duration: 1000, useNativeDriver: true }),
+          Animated.timing(outerPulse, { toValue: 1, duration: 1000, useNativeDriver: true }),
         ])
       );
-      animation.start();
-      outerAnim.start();
+      anim3 = Animated.loop(
+        Animated.sequence([
+          Animated.timing(ring2Pulse, { toValue: 1.65, duration: 1400, useNativeDriver: true }),
+          Animated.timing(ring2Pulse, { toValue: 1, duration: 1400, useNativeDriver: true }),
+        ])
+      );
+      anim1.start(); anim2.start(); anim3.start();
       return () => {
-        animation.stop();
-        outerAnim.stop();
-        pulse.setValue(1);
-        outerPulse.setValue(1);
+        anim1.stop(); anim2.stop(); anim3.stop();
+        pulse.setValue(1); outerPulse.setValue(1); ring2Pulse.setValue(1);
       };
     } else if (isSpeaking) {
-      animation = Animated.loop(
+      anim1 = Animated.loop(
         Animated.sequence([
-          Animated.timing(pulse, { toValue: 1.06, duration: 400, useNativeDriver: true }),
-          Animated.timing(pulse, { toValue: 0.96, duration: 400, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1.07, duration: 400, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 0.95, duration: 400, useNativeDriver: true }),
         ])
       );
-      animation.start();
+      anim2 = Animated.loop(
+        Animated.sequence([
+          Animated.timing(outerPulse, { toValue: 1.25, duration: 700, useNativeDriver: true }),
+          Animated.timing(outerPulse, { toValue: 1, duration: 700, useNativeDriver: true }),
+        ])
+      );
+      anim1.start(); anim2.start();
       return () => {
-        animation.stop();
-        pulse.setValue(1);
+        anim1.stop(); anim2.stop();
+        pulse.setValue(1); outerPulse.setValue(1);
       };
     } else {
-      pulse.setValue(1);
-      outerPulse.setValue(1);
+      pulse.setValue(1); outerPulse.setValue(1); ring2Pulse.setValue(1);
     }
-  }, [voiceState, pulse, outerPulse, isListening, isSpeaking]);
+  }, [voiceState, pulse, outerPulse, ring2Pulse, isListening, isSpeaking]);
 
   const stateLabel = {
     idle: "Tap to speak",
@@ -60,20 +69,18 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
     speaking: "Speaking...",
   }[voiceState];
 
-  const orbColor = isActive ? colors.primary : colors.surface;
+  const orbColor = isActive ? colors.primary : colors.surfaceElevated;
   const orbBorder = isActive ? colors.primaryBorder : colors.borderStrong;
   const iconColor = isActive ? colors.textOnYellow : colors.textPrimary;
 
   return (
     <View style={styles.wrapper}>
-      {/* Outer glow ring — only when listening */}
+      {/* Outer glow rings — only when active */}
       {isListening && (
-        <Animated.View
-          style={[
-            styles.outerRing,
-            { transform: [{ scale: outerPulse }] },
-          ]}
-        />
+        <Animated.View style={[styles.ring3, { transform: [{ scale: ring2Pulse }] }]} />
+      )}
+      {isActive && (
+        <Animated.View style={[styles.ring2, { transform: [{ scale: outerPulse }] }]} />
       )}
 
       <Pressable
@@ -90,6 +97,7 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
           style={[
             styles.orb,
             { backgroundColor: orbColor, borderColor: orbBorder, transform: [{ scale: pulse }] },
+            isActive && styles.activeOrb,
             isProcessing && styles.processingOrb,
           ]}
         >
@@ -103,9 +111,12 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
         </Animated.View>
       </Pressable>
 
-      <Text style={[styles.label, isActive && styles.labelActive]} accessibilityLiveRegion="polite">
-        {stateLabel}
-      </Text>
+      <View style={styles.labelRow}>
+        <View style={[styles.labelDot, { backgroundColor: isActive ? colors.primary : colors.textMuted }]} />
+        <Text style={[styles.label, isActive && styles.labelActive]}>
+          {stateLabel}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -113,41 +124,63 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
 const styles = StyleSheet.create({
   wrapper: {
     alignItems: "center",
-    gap: 12,
+    gap: 16,
   },
-  outerRing: {
+  ring3: {
     position: "absolute",
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    borderWidth: 2,
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    borderWidth: 1,
+    borderColor: "rgba(255,235,59,0.12)",
+    backgroundColor: "rgba(255,235,59,0.04)",
+    top: -30,
+  },
+  ring2: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 1.5,
     borderColor: colors.primaryBorder,
     backgroundColor: colors.primaryGlow,
-    top: -15,
+    top: -10,
   },
   orb: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
+  },
+  activeOrb: {
     shadowColor: colors.primary,
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
+    shadowOpacity: 0.6,
+    shadowRadius: 24,
     shadowOffset: { width: 0, height: 0 },
-    elevation: 8,
+    elevation: 10,
   },
   processingOrb: {
     borderStyle: "dashed",
     opacity: 0.85,
   },
   icon: {
-    fontSize: 28,
+    fontSize: 32,
+  },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  labelDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   label: {
     color: colors.textMuted,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
     letterSpacing: 0.4,
   },

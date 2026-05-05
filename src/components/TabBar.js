@@ -2,6 +2,12 @@ import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import colors from "../theme/colors";
 
+const TAB_ICONS = {
+  markets: "📈",
+  chat: "💬",
+  portfolio: "💼",
+};
+
 export default function TabBar({ tabs, activeTab, onTabChange }) {
   return (
     <View style={styles.container}>
@@ -12,7 +18,10 @@ export default function TabBar({ tabs, activeTab, onTabChange }) {
             key={tab}
             onPress={() => onTabChange(tab)}
             style={[styles.tabButton, isActive && styles.activeTabButton]}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: isActive }}
           >
+            <Text style={styles.tabIcon}>{TAB_ICONS[tab] ?? "•"}</Text>
             <Text style={[styles.tab, isActive && styles.activeTab]}>
               {tab.toUpperCase()}
             </Text>
@@ -26,9 +35,9 @@ export default function TabBar({ tabs, activeTab, onTabChange }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    gap: 6,
-    padding: 6,
-    borderRadius: 18,
+    gap: 4,
+    padding: 5,
+    borderRadius: 20,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -37,17 +46,26 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 13,
+    paddingVertical: 10,
+    borderRadius: 16,
+    gap: 3,
   },
   activeTabButton: {
     backgroundColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  tabIcon: {
+    fontSize: 16,
   },
   tab: {
     color: colors.textMuted,
     fontWeight: "800",
-    letterSpacing: 1,
-    fontSize: 12,
+    letterSpacing: 0.8,
+    fontSize: 10,
   },
   activeTab: {
     color: colors.textOnYellow,

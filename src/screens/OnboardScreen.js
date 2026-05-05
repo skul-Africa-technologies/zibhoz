@@ -2,16 +2,25 @@ import React from "react";
 import { View, Text, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import colors from "../theme/colors";
 
+const FEATURES = [
+  { icon: "🔊", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
+  { icon: "✅", title: "Safe Trades", desc: "Double-confirmed voice trade execution" },
+  { icon: "📊", title: "Live Portfolio", desc: "Real-time tracking by voice, always" },
+];
+
 export default function OnboardScreen({ onNext }) {
   return (
     <SafeAreaView style={styles.container}>
-      {/* Yellow glow — brand identity */}
+      {/* Glow accents */}
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
 
       <View style={styles.center}>
-        {/* Soundwave orb — logo concept */}
+
+        {/* Soundwave orb */}
         <View style={styles.orbWrap}>
+          <View style={styles.orbRing3} />
+          <View style={styles.orbRing2} />
           <View style={styles.orbOuter}>
             <View style={styles.orbInner}>
               <Text style={styles.orbIcon}>🎙</Text>
@@ -19,29 +28,34 @@ export default function OnboardScreen({ onNext }) {
           </View>
         </View>
 
-        {/* Brand name */}
-        <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
-        <Text style={styles.logo}>ZIBHOZ</Text>
-        <Text style={styles.taglineLine}>Trade with your voice.</Text>
-        <Text style={styles.taglineLine}>Built for everyone.</Text>
+        {/* Brand */}
+        <View style={styles.brandBlock}>
+          <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
+          <Text style={styles.logo}>ZIBHOZ</Text>
+          <Text style={styles.tagline}>Trade with your voice.{"\n"}Built for everyone.</Text>
+        </View>
 
-        {/* Feature bullets */}
+        {/* Feature cards */}
         <View style={styles.features}>
-          {[
-            "🔊  Speak to discover & explore markets",
-            "✅  Double-confirmed voice trade execution",
-            "📊  Real-time portfolio tracking by voice",
-          ].map((feat) => (
-            <View key={feat} style={styles.featureRow}>
-              <Text style={styles.featureText}>{feat}</Text>
+          {FEATURES.map((feat) => (
+            <View key={feat.title} style={styles.featureRow}>
+              <View style={styles.featureIcon}>
+                <Text style={styles.featureEmoji}>{feat.icon}</Text>
+              </View>
+              <View style={styles.featureMeta}>
+                <Text style={styles.featureTitle}>{feat.title}</Text>
+                <Text style={styles.featureDesc}>{feat.desc}</Text>
+              </View>
             </View>
           ))}
         </View>
 
         {/* CTA */}
         <Pressable style={styles.button} onPress={onNext}>
-          <Text style={styles.buttonText}>Get Started</Text>
+          <Text style={styles.buttonText}>Get Started  →</Text>
         </Pressable>
+
+        <Text style={styles.footnote}>No account required · Wallet-powered</Text>
       </View>
     </SafeAreaView>
   );
@@ -57,10 +71,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -80,
     alignSelf: "center",
-    width: 300,
-    height: 300,
-    borderRadius: 150,
-    backgroundColor: "rgba(255,235,59,0.10)",
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: "rgba(255,235,59,0.09)",
   },
   glowBottom: {
     position: "absolute",
@@ -69,22 +83,44 @@ const styles = StyleSheet.create({
     width: 260,
     height: 260,
     borderRadius: 130,
-    backgroundColor: "rgba(255,255,255,0.03)",
+    backgroundColor: "rgba(255,255,255,0.02)",
   },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    gap: 16,
+    gap: 24,
   },
+
+  // Orb
   orbWrap: {
-    marginBottom: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 140,
+    height: 140,
   },
-  orbOuter: {
+  orbRing3: {
+    position: "absolute",
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 1,
+    borderColor: "rgba(255,235,59,0.10)",
+  },
+  orbRing2: {
+    position: "absolute",
     width: 110,
     height: 110,
     borderRadius: 55,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+    backgroundColor: "rgba(255,235,59,0.06)",
+  },
+  orbOuter: {
+    width: 82,
+    height: 82,
+    borderRadius: 41,
     borderWidth: 2,
     borderColor: colors.primaryBorder,
     backgroundColor: colors.primaryDim,
@@ -92,78 +128,119 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   orbInner: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: colors.primary,
-    shadowOpacity: 0.6,
-    shadowRadius: 24,
+    shadowOpacity: 0.65,
+    shadowRadius: 20,
     shadowOffset: { width: 0, height: 0 },
     elevation: 10,
   },
   orbIcon: {
-    fontSize: 32,
+    fontSize: 26,
+  },
+
+  // Brand
+  brandBlock: {
+    alignItems: "center",
+    gap: 6,
   },
   kicker: {
     color: colors.primary,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "900",
     letterSpacing: 2,
     textAlign: "center",
   },
   logo: {
-    fontSize: 52,
+    fontSize: 48,
     fontWeight: "900",
-    letterSpacing: 4,
+    letterSpacing: 5,
     color: colors.textPrimary,
     textAlign: "center",
   },
-  taglineLine: {
-    fontSize: 22,
+  tagline: {
+    fontSize: 18,
     color: colors.textSecondary,
-    fontWeight: "700",
-    lineHeight: 32,
+    fontWeight: "600",
+    lineHeight: 28,
     textAlign: "center",
   },
+
+  // Features
   features: {
     width: "100%",
     gap: 10,
-    marginTop: 4,
   },
   featureRow: {
     backgroundColor: colors.surface,
-    borderRadius: 14,
+    borderRadius: 18,
     padding: 14,
     borderWidth: 1,
     borderColor: colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
   },
-  featureText: {
+  featureIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    backgroundColor: colors.primaryDim,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  featureEmoji: {
+    fontSize: 20,
+  },
+  featureMeta: {
+    flex: 1,
+    gap: 2,
+  },
+  featureTitle: {
     color: colors.textPrimary,
-    fontSize: 15,
-    fontWeight: "600",
-    lineHeight: 22,
+    fontSize: 14,
+    fontWeight: "900",
   },
+  featureDesc: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: "500",
+    lineHeight: 18,
+  },
+
+  // CTA
   button: {
     backgroundColor: colors.primary,
-    paddingVertical: 18,
-    paddingHorizontal: 48,
-    borderRadius: 20,
+    paddingVertical: 17,
+    paddingHorizontal: 52,
+    borderRadius: 999,
     alignItems: "center",
-    marginTop: 8,
     shadowColor: colors.primary,
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
+    shadowOpacity: 0.45,
+    shadowRadius: 18,
     shadowOffset: { width: 0, height: 6 },
     elevation: 8,
+    width: "100%",
   },
   buttonText: {
     color: colors.textOnYellow,
     fontWeight: "900",
-    fontSize: 18,
+    fontSize: 17,
     letterSpacing: 0.6,
+  },
+  footnote: {
+    color: colors.textMuted,
+    fontSize: 11,
+    fontWeight: "500",
+    textAlign: "center",
   },
 });
 
