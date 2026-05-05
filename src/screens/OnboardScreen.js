@@ -5,18 +5,43 @@ import colors from "../theme/colors";
 export default function OnboardScreen({ onNext }) {
   return (
     <SafeAreaView style={styles.container}>
+      {/* Yellow glow — brand identity */}
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
+
       <View style={styles.center}>
-        <View style={styles.heroCard}>
-          <Text style={styles.kicker}>BLOCKCHAIN AI</Text>
-          <Text style={styles.logo}>ZIBHOZ</Text>
-          <Text style={styles.title}>Voice trading that feels like a premium dashboard</Text>
-          <Text style={styles.subtitle}>Monitor markets, speak trades, and keep every signal in one polished space.</Text>
-          <Pressable style={styles.button} onPress={onNext}>
-            <Text style={styles.buttonText}>Get started</Text>
-          </Pressable>
+        {/* Soundwave orb — logo concept */}
+        <View style={styles.orbWrap}>
+          <View style={styles.orbOuter}>
+            <View style={styles.orbInner}>
+              <Text style={styles.orbIcon}>🎙</Text>
+            </View>
+          </View>
         </View>
+
+        {/* Brand name */}
+        <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
+        <Text style={styles.logo}>ZIBHOZ</Text>
+        <Text style={styles.taglineLine}>Trade with your voice.</Text>
+        <Text style={styles.taglineLine}>Built for everyone.</Text>
+
+        {/* Feature bullets */}
+        <View style={styles.features}>
+          {[
+            "🔊  Speak to discover & explore markets",
+            "✅  Double-confirmed voice trade execution",
+            "📊  Real-time portfolio tracking by voice",
+          ].map((feat) => (
+            <View key={feat} style={styles.featureRow}>
+              <Text style={styles.featureText}>{feat}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* CTA */}
+        <Pressable style={styles.button} onPress={onNext}>
+          <Text style={styles.buttonText}>Get Started</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -29,76 +54,115 @@ const styles = StyleSheet.create({
   },
   glowTop: {
     position: "absolute",
-    top: -70,
-    right: -90,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: "rgba(255,138,61,0.28)",
+    top: -80,
+    alignSelf: "center",
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(255,235,59,0.10)",
   },
   glowBottom: {
     position: "absolute",
-    left: -100,
-    bottom: -40,
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    backgroundColor: "rgba(124,92,255,0.18)",
+    bottom: -60,
+    left: -80,
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: "rgba(255,255,255,0.03)",
   },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-  },
-  heroCard: {
-    width: "100%",
-    borderRadius: 30,
     padding: 24,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    shadowColor: "#000",
-    shadowOpacity: 0.24,
+    gap: 16,
+  },
+  orbWrap: {
+    marginBottom: 8,
+  },
+  orbOuter: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 2,
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primaryDim,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  orbInner: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: colors.primary,
+    shadowOpacity: 0.6,
     shadowRadius: 24,
-    shadowOffset: { width: 0, height: 12 },
-    elevation: 4,
-    gap: 14,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 10,
+  },
+  orbIcon: {
+    fontSize: 32,
   },
   kicker: {
     color: colors.primary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "900",
-    letterSpacing: 1.6,
+    letterSpacing: 2,
+    textAlign: "center",
   },
   logo: {
-    fontSize: 34,
+    fontSize: 52,
     fontWeight: "900",
-    letterSpacing: 1.4,
+    letterSpacing: 4,
     color: colors.textPrimary,
+    textAlign: "center",
   },
-  title: {
-    fontSize: 24,
-    color: colors.textPrimary,
-    fontWeight: "900",
-    lineHeight: 32,
-  },
-  subtitle: {
+  taglineLine: {
+    fontSize: 22,
     color: colors.textSecondary,
-    fontSize: 14,
+    fontWeight: "700",
+    lineHeight: 32,
+    textAlign: "center",
+  },
+  features: {
+    width: "100%",
+    gap: 10,
+    marginTop: 4,
+  },
+  featureRow: {
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  featureText: {
+    color: colors.textPrimary,
+    fontSize: 15,
+    fontWeight: "600",
     lineHeight: 22,
   },
   button: {
     backgroundColor: colors.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 48,
+    borderRadius: 20,
     alignItems: "center",
-    marginTop: 6,
+    marginTop: 8,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
   },
   buttonText: {
-    color: colors.textPrimary,
+    color: colors.textOnYellow,
     fontWeight: "900",
-    letterSpacing: 0.4,
+    fontSize: 18,
+    letterSpacing: 0.6,
   },
 });
+
