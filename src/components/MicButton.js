@@ -1,51 +1,143 @@
-import React from "react";
-import { Pressable, Text, View, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Pressable, Text, View, StyleSheet, Animated } from "react-native";
 import colors from "../theme/colors";
 
-export default function MicButton({ onPress }) {
+// voiceState: "idle" | "listening" | "processing" | "speaking"
+export default function MicButton({ onPress, voiceState = "idle" }) {
+  const pulse = useRef(new Animated.Value(1)).current;
+  const outerPulse = useRef(new Animated.Value(1)).current;
+
+  const isListening = voiceState === "listening";
+  const isProcessing = voiceState === "processing";
+  const isSpeaking = voiceState === "speaking";
+  const isActive = isListening || isSpeaking;
+
+  useEffect(() => {
+    let animation;
+    if (isListening) {
+      animation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulse, { toValue: 1.12, duration: 600, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 1, duration: 600, useNativeDriver: true }),
+        ])
+      );
+      const outerAnim = Animated.loop(
+        Animated.sequence([
+          Animated.timing(outerPulse, { toValue: 1.35, duration: 900, useNativeDriver: true }),
+          Animated.timing(outerPulse, { toValue: 1, duration: 900, useNativeDriver: true }),
+        ])
+      );
+      animation.start();
+      outerAnim.start();
+      return () => {
+        animation.stop();
+        outerAnim.stop();
+        pulse.setValue(1);
+        outerPulse.setValue(1);
+      };
+    } else if (isSpeaking) {
+      animation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulse, { toValue: 1.06, duration: 400, useNativeDriver: true }),
+          Animated.timing(pulse, { toValue: 0.96, duration: 400, useNativeDriver: true }),
+        ])
+      );
+      animation.start();
+      return () => {
+        animation.stop();
+        pulse.setValue(1);
+      };
+    } else {
+      pulse.setValue(1);
+      outerPulse.setValue(1);
+    }
+  }, [voiceState, pulse, outerPulse, isListening, isSpeaking]);
+
+  const stateLabel = {
+    idle: "Tap to speak",
+    listening: "Listening...",
+    processing: "Thinking...",
+    speaking: "Speaking...",
+  }[voiceState];
+
+  const orbColor = isActive ? colors.primary : colors.surface;
+  const orbBorder = isActive ? colors.primaryBorder : colors.borderStrong;
+  const iconColor = isActive ? colors.textOnYellow : colors.textPrimary;
+
   return (
-    <Pressable style={styles.mic} onPress={onPress}>
-      <View style={styles.innerRing}>
-        <Text style={styles.icon}>🎙</Text>
-      </View>
-      <Text style={styles.label}>Tap to speak</Text>
-    </Pressable>
+    <View style={styles.wrapper}>
+      {/* Outer glow ring — only when listening */}
+      {isListening && (
+        <Animated.View
+          style={[
+            styles.outerRing,
+            { transform: [{ scale: outerPulse }] },
+          ]}
+        />
+      )}
+
+      <Pressable onPress={onPress}>
+        <Animated.View
+          style={[
+            styles.orb,
+            { backgroundColor: orbColor, borderColor: orbBorder, transform: [{ scale: pulse }] },
+            isProcessing && styles.processingOrb,
+          ]}
+        >
+          <Text style={[styles.icon, { color: iconColor }]}>
+            {isProcessing ? "⟳" : isSpeaking ? "◉" : "🎙"}
+          </Text>
+        </Animated.View>
+      </Pressable>
+
+      <Text style={[styles.label, isActive && styles.labelActive]}>{stateLabel}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mic: {
-    backgroundColor: colors.primary,
-    width: 160,
-    borderRadius: 28,
-    justifyContent: "center",
+  wrapper: {
     alignItems: "center",
-    paddingVertical: 14,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.18)",
-    shadowColor: colors.primary,
-    shadowOpacity: 0.35,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 6,
-    gap: 6,
+    gap: 12,
   },
-  innerRing: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+  outerRing: {
+    position: "absolute",
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 2,
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primaryGlow,
+    top: -15,
+  },
+  orb: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(7,8,20,0.18)",
+    borderWidth: 2,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 8,
+  },
+  processingOrb: {
+    borderStyle: "dashed",
+    opacity: 0.85,
   },
   icon: {
-    color: colors.textPrimary,
-    fontSize: 18,
+    fontSize: 28,
   },
   label: {
-    color: colors.textPrimary,
-    fontSize: 12,
-    fontWeight: "800",
-    letterSpacing: 0.6,
+    color: colors.textMuted,
+    fontSize: 14,
+    fontWeight: "700",
+    letterSpacing: 0.4,
+  },
+  labelActive: {
+    color: colors.primary,
   },
 });
+
