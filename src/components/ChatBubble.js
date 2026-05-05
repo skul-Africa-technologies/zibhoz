@@ -5,34 +5,90 @@ import colors from "../theme/colors";
 export default function ChatBubble({ role, text }) {
   const isUser = role === "user";
   return (
-    <View style={[styles.bubble, isUser ? styles.user : styles.ai]}>
-      <Text style={[styles.role, isUser && styles.roleUser]}>{isUser ? "YOU" : "ZIBHOZ AI"}</Text>
-      <Text style={styles.text}>{text}</Text>
+    <View style={[styles.row, isUser && styles.rowUser]}>
+      {/* Avatar */}
+      {!isUser && (
+        <View style={styles.aiAvatar}>
+          <Text style={styles.aiAvatarIcon}>Z</Text>
+        </View>
+      )}
+
+      <View style={[styles.bubble, isUser ? styles.user : styles.ai]}>
+        <Text style={[styles.role, isUser && styles.roleUser]}>{isUser ? "YOU" : "ZIBHOZ AI"}</Text>
+        <Text style={styles.text}>{text}</Text>
+      </View>
+
+      {isUser && (
+        <View style={styles.userAvatar}>
+          <Text style={styles.userAvatarIcon}>👤</Text>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bubble: {
-    padding: 16,
-    borderRadius: 18,
-    maxWidth: "86%",
+  row: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 10,
+    alignSelf: "flex-start",
+    maxWidth: "90%",
+  },
+  rowUser: {
+    alignSelf: "flex-end",
+    flexDirection: "row-reverse",
+  },
+  aiAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: colors.primaryDim,
     borderWidth: 1,
-    gap: 6,
+    borderColor: colors.primaryBorder,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  aiAvatarIcon: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: "900",
+  },
+  userAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  userAvatarIcon: {
+    fontSize: 14,
+  },
+  bubble: {
+    padding: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    gap: 5,
+    flex: 1,
   },
   user: {
     backgroundColor: colors.primaryDim,
     borderColor: colors.primaryBorder,
-    alignSelf: "flex-end",
+    borderBottomRightRadius: 4,
   },
   ai: {
     backgroundColor: colors.surfaceAlt,
     borderColor: colors.border,
-    alignSelf: "flex-start",
+    borderBottomLeftRadius: 4,
   },
   role: {
     color: colors.textMuted,
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "900",
     letterSpacing: 1.2,
   },
@@ -41,8 +97,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.textPrimary,
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 21,
     fontWeight: "500",
   },
 });
