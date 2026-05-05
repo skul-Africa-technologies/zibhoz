@@ -6,7 +6,6 @@ import {
   Pressable,
   SafeAreaView,
   StyleSheet,
-  Platform,
 } from "react-native";
 import colors from "../theme/colors";
 
@@ -28,6 +27,7 @@ export default function WaitlistScreen() {
       return;
     }
     setError("");
+    // TODO: integrate with a backend/email service to persist the sign-up
     setSubmitted(true);
   }
 
@@ -103,7 +103,7 @@ export default function WaitlistScreen() {
             />
             {!!error && <Text style={styles.errorText}>{error}</Text>}
             <Pressable style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Reserve My Spot  →</Text>
+              <Text style={styles.buttonText}>Reserve My Spot →</Text>
             </Pressable>
           </View>
         )}
@@ -285,7 +285,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
     width: "100%",
-    ...(Platform.OS === "web" ? { outlineStyle: "none" } : {}),
   },
   inputError: {
     borderColor: colors.negative,
