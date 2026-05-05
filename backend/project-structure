@@ -1,0 +1,54 @@
+src/
+│
+├── modules/
+│   ├── voice/
+│   │   ├── voice.gateway.ts
+│   │   ├── voice.service.ts
+│   │   └── voice.module.ts
+│   │
+│   ├── stt/
+│   │   ├── stt.service.ts
+│   │   └── stt.module.ts
+│   │
+│   ├── tts/
+│   │   ├── tts.service.ts
+│   │   └── tts.module.ts
+│   │
+│   ├── llm/
+│   │   ├── llm.service.ts
+│   │   ├── prompts/
+│   │   │   └── intent.prompts.ts
+│   │   └── llm.module.ts
+│   │
+│   ├── market/
+│   │   ├── market.service.ts
+│   │   ├── market.controller.ts
+│   │   └── market.module.ts
+│   │
+│   ├── trade/
+│   │   ├── trade.service.ts
+│   │   ├── trade.controller.ts
+│   │   ├── dto/
+│   │   └── trade.module.ts
+│   │
+│   ├── blockchain/
+│   │   ├── blockchain.service.ts
+│   │   └── blockchain.module.ts
+│   │
+│   ├── portfolio/
+│   │   ├── portfolio.service.ts
+│   │   └── portfolio.module.ts
+│
+├── common/
+│   ├── enums/
+│   │   └── intent.enum.ts
+│   ├── interfaces/
+│   │   └── voice-command.interface.ts
+│   ├── utils/
+│   └── filters/
+│
+├── config/
+│   └── env.config.ts
+│
+├── app.module.ts
+└── main.ts
