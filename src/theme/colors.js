@@ -1,13 +1,13 @@
 // Zibhoz Brand Palette — optimized for visually impaired users
-// High-contrast dark mode: true black + electric yellow + pure white
+// High-contrast dark mode: deep brand purple + electric yellow + pure white
 const colors = {
   // Backgrounds
-  background: "#121212",
-  backgroundAlt: "#181818",
-  surface: "#1E1E1E",
-  surfaceAlt: "#242424",
-  surfaceElevated: "#2C2C2C",
-  surfaceSoft: "#333333",
+  background: "#0B0614",
+  backgroundAlt: "#110C1C",
+  surface: "#1A1228",
+  surfaceAlt: "#201830",
+  surfaceElevated: "#2A2040",
+  surfaceSoft: "#332C50",
 
   // Brand
   primary: "#FFEB3B",          // Electric Yellow — highest visibility on black
