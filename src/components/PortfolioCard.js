@@ -44,7 +44,7 @@ export default function PortfolioCard({ symbol, outcome, amount, pnl, status }) 
         </View>
         <View style={styles.statSep} />
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>P&amp;L</Text>
+          <Text style={styles.statLabel}>P&L</Text>
           <Text style={[styles.statValue, { color: isProfit ? colors.positive : colors.negative }]}>
             {pnl}
           </Text>
