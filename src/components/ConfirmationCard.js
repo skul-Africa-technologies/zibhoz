@@ -11,31 +11,44 @@ export default function ConfirmationCard({ visible, trade, onConfirm, onCancel }
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.card}>
-          {/* Warning header */}
-          <View style={styles.warningBadge}>
-            <Text style={styles.warningText}>⚠ CONFIRM TRADE</Text>
+          {/* Header */}
+          <View style={styles.cardHeader}>
+            <View style={styles.warningBadge}>
+              <Text style={styles.warningDot}>⚠</Text>
+              <Text style={styles.warningText}>CONFIRM TRADE</Text>
+            </View>
           </View>
 
-          {/* Trade summary — large text for low-vision users */}
-          <Text style={styles.action}>{trade.action}</Text>
-          <Text style={styles.amount}>{trade.amount}</Text>
-          <Text style={styles.outcome}>{trade.outcome}</Text>
-          <Text style={styles.market}>{trade.market}</Text>
+          {/* Trade summary */}
+          <View style={styles.summaryBox}>
+            <Text style={styles.actionLabel}>{trade.action}</Text>
+            <Text style={styles.amount}>{trade.amount}</Text>
+            <View style={styles.outcomePill}>
+              <Text style={styles.outcomeText}>{trade.outcome}</Text>
+            </View>
+          </View>
+
+          <View style={styles.marketRow}>
+            <Text style={styles.marketLabel}>MARKET</Text>
+            <Text style={styles.market}>{trade.market}</Text>
+          </View>
 
           {/* Divider */}
           <View style={styles.divider} />
 
           <Text style={styles.confirmNote}>
-            This trade will be submitted to the blockchain and cannot be undone. Say "confirm" or tap the button below to proceed, or say "cancel" to abort.
+            This trade will be submitted to the blockchain and cannot be undone.
           </Text>
 
           {/* Actions */}
-          <Pressable style={styles.confirmButton} onPress={onConfirm}>
-            <Text style={styles.confirmButtonText}>✓  CONFIRM TRADE</Text>
-          </Pressable>
-          <Pressable style={styles.cancelButton} onPress={onCancel}>
-            <Text style={styles.cancelButtonText}>✕  CANCEL</Text>
-          </Pressable>
+          <View style={styles.actionRow}>
+            <Pressable style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelButtonText}>✕  CANCEL</Text>
+            </Pressable>
+            <Pressable style={styles.confirmButton} onPress={onConfirm}>
+              <Text style={styles.confirmButtonText}>✓  CONFIRM</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </Modal>
@@ -45,7 +58,7 @@ export default function ConfirmationCard({ visible, trade, onConfirm, onCancel }
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.88)",
+    backgroundColor: "rgba(0,0,0,0.90)",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -54,80 +67,123 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: colors.surface,
     borderRadius: 28,
-    padding: 28,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    gap: 14,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+    gap: 18,
+  },
+  cardHeader: {
     alignItems: "center",
   },
   warningBadge: {
-    backgroundColor: colors.warning,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "rgba(255,59,48,0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(255,59,48,0.30)",
+    paddingHorizontal: 14,
+    paddingVertical: 7,
     borderRadius: 999,
   },
-  warningText: {
-    color: "#FFFFFF",
-    fontWeight: "900",
-    fontSize: 13,
-    letterSpacing: 1,
+  warningDot: {
+    fontSize: 12,
+    color: colors.negative,
   },
-  action: {
+  warningText: {
+    color: colors.negative,
+    fontWeight: "900",
+    fontSize: 12,
+    letterSpacing: 1.2,
+  },
+  summaryBox: {
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 20,
+    alignItems: "center",
+    gap: 8,
+  },
+  actionLabel: {
     color: colors.textMuted,
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 11,
+    fontWeight: "900",
     letterSpacing: 2,
     textTransform: "uppercase",
-    textAlign: "center",
   },
   amount: {
     color: colors.primary,
-    fontSize: 52,
+    fontSize: 56,
     fontWeight: "900",
-    textAlign: "center",
-    lineHeight: 60,
+    lineHeight: 64,
   },
-  outcome: {
-    color: colors.textPrimary,
-    fontSize: 32,
+  outcomePill: {
+    backgroundColor: colors.primaryDim,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+    paddingHorizontal: 20,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  outcomeText: {
+    color: colors.primary,
     fontWeight: "900",
-    textAlign: "center",
+    fontSize: 16,
+    letterSpacing: 1,
+  },
+  marketRow: {
+    gap: 4,
+  },
+  marketLabel: {
+    color: colors.textMuted,
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 1.5,
   },
   market: {
     color: colors.textSecondary,
-    fontSize: 16,
-    fontWeight: "700",
-    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "600",
+    lineHeight: 20,
   },
   divider: {
-    width: "100%",
     height: 1,
     backgroundColor: colors.border,
   },
   confirmNote: {
     color: colors.textMuted,
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 13,
+    lineHeight: 20,
     textAlign: "center",
   },
+  actionRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
   confirmButton: {
-    width: "100%",
+    flex: 1,
     backgroundColor: colors.primary,
-    paddingVertical: 18,
-    borderRadius: 18,
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: "center",
+    shadowColor: colors.primary,
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   confirmButtonText: {
     color: colors.textOnYellow,
     fontWeight: "900",
-    fontSize: 18,
+    fontSize: 15,
     letterSpacing: 0.6,
   },
   cancelButton: {
-    width: "100%",
+    flex: 1,
     backgroundColor: colors.surfaceElevated,
     paddingVertical: 16,
-    borderRadius: 18,
+    borderRadius: 16,
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.borderStrong,
@@ -135,7 +191,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: colors.negative,
     fontWeight: "900",
-    fontSize: 16,
+    fontSize: 15,
     letterSpacing: 0.6,
   },
 });
