@@ -31,11 +31,11 @@ import PortfolioCard from "../components/PortfolioCard";
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Tap to speak",          color: "#FFFFFF",  sub: "Ask about any market"         },
-  listening:  { label: "Listening…",            color: "#C200FB",  sub: "Go ahead, I'm ready"          },
-  processing: { label: "Thinking…",             color: "#F7931A",  sub: "Fetching market data"          },
-  speaking:   { label: "Speaking…",             color: "#0ECB81",  sub: "Playing voice response"        },
-  error:      { label: "Couldn't hear you",     color: "#F6465D",  sub: "Tap to try again"              },
+  idle:       { label: "Tap to speak",          color: "#FFFFFF",         sub: "Ask about any market"         },
+  listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
+  processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
+  speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
+  error:      { label: "Couldn't hear you",     color: "#F6465D",         sub: "Tap to try again"              },
 };
 
 /* ─────────────────────────────────────────────────────────
@@ -318,7 +318,7 @@ function TxResult({ result, onClose }) {
               <Text style={styles.txHashVal}>5xH7k…mNp3q</Text>
             </View>
           )}
-          <Pressable onPress={onClose} style={[styles.txBtn, { backgroundColor: ok ? "#0ECB81" : pending ? "#F7931A" : "#C200FB" }]} accessibilityLabel="Close">
+          <Pressable onPress={onClose} style={[styles.txBtn, { backgroundColor: ok ? "#0ECB81" : pending ? "#F7931A" : colors.negative }]} accessibilityLabel="Close">
             <Text style={styles.txBtnText}>{ok ? "View Portfolio →" : "Got it"}</Text>
           </Pressable>
         </View>
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#06030F",
+    backgroundColor: colors.background,
   },
 
   /* Ambient glow behind everything */
@@ -768,20 +768,20 @@ const styles = StyleSheet.create({
   resultCard: {
     marginHorizontal: 18,
     marginBottom: 12,
-    backgroundColor: "#12091E",
+    backgroundColor: colors.surface,
     borderRadius: 22,
     padding: 20,
     borderWidth: 1,
-    borderColor: "rgba(194,0,251,0.25)",
+    borderColor: colors.primaryBorder,
     gap: 10,
-    shadowColor: "#C200FB",
+    shadowColor: colors.primary,
     shadowOpacity: 0.15,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 6 },
     elevation: 8,
   },
   resultEyebrow: {
-    color: "#C200FB",
+    color: colors.primary,
     fontSize: 10,
     fontWeight: "900",
     letterSpacing: 2,
@@ -878,11 +878,11 @@ const styles = StyleSheet.create({
     flex: 2,
     padding: 13,
     borderRadius: 12,
-    backgroundColor: "#C200FB",
+    backgroundColor: colors.primary,
     alignItems: "center",
   },
   resultTradeBtnText: {
-    color: "#fff",
+    color: colors.textOnYellow,
     fontSize: 13,
     fontWeight: "900",
   },
@@ -895,7 +895,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "ios" ? 24 : 12,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.06)",
-    backgroundColor: "rgba(6,3,15,0.95)",
+    backgroundColor: "rgba(18,18,18,0.95)",
   },
   navItem: {
     flex: 1,
@@ -920,12 +920,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   drawerSheet: {
-    backgroundColor: "#0F0820",
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     maxHeight: "80%",
     borderTopWidth: 1,
-    borderColor: "rgba(194,0,251,0.2)",
+    borderColor: colors.border,
     paddingHorizontal: 20,
     paddingBottom: 0,
   },
@@ -971,11 +971,11 @@ const styles = StyleSheet.create({
 
   /* Portfolio summary in drawer */
   portfolioSummary: {
-    backgroundColor: "rgba(194,0,251,0.08)",
+    backgroundColor: colors.primaryDim,
     borderRadius: 18,
     padding: 18,
     borderWidth: 1,
-    borderColor: "rgba(194,0,251,0.2)",
+    borderColor: colors.primaryBorder,
     gap: 4,
   },
   portfolioSummaryLabel: {
@@ -1054,7 +1054,7 @@ const styles = StyleSheet.create({
   txCard: {
     width: "100%",
     maxWidth: 340,
-    backgroundColor: "#12091E",
+    backgroundColor: colors.surface,
     borderRadius: 28,
     padding: 32,
     alignItems: "center",
@@ -1066,7 +1066,7 @@ const styles = StyleSheet.create({
   txBody:    { color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center", lineHeight: 20 },
   txHash:    { backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 10, padding: 12, width: "100%", alignItems: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.07)" },
   txHashLabel: { color: "rgba(255,255,255,0.25)", fontSize: 9, letterSpacing: 1, marginBottom: 3 },
-  txHashVal: { color: "#C200FB", fontSize: 12 },
+  txHashVal: { color: colors.primary, fontSize: 12 },
   txBtn:     { width: "100%", padding: 15, borderRadius: 12, alignItems: "center", marginTop: 4 },
   txBtnText: { color: "#fff", fontSize: 15, fontWeight: "900" },
 });
