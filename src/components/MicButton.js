@@ -76,7 +76,16 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
         />
       )}
 
-      <Pressable onPress={onPress}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={
+          voiceState === "idle"
+            ? "Activate microphone to speak"
+            : `Voice state: ${voiceState}`
+        }
+        accessibilityHint="Double tap to start or stop voice input"
+      >
         <Animated.View
           style={[
             styles.orb,
@@ -84,13 +93,19 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
             isProcessing && styles.processingOrb,
           ]}
         >
-          <Text style={[styles.icon, { color: iconColor }]}>
+          <Text
+            style={[styles.icon, { color: iconColor }]}
+            accessibilityElementsHidden
+            importantForAccessibility="no"
+          >
             {isProcessing ? "⟳" : isSpeaking ? "◉" : "🎙"}
           </Text>
         </Animated.View>
       </Pressable>
 
-      <Text style={[styles.label, isActive && styles.labelActive]}>{stateLabel}</Text>
+      <Text style={[styles.label, isActive && styles.labelActive]} accessibilityLiveRegion="polite">
+        {stateLabel}
+      </Text>
     </View>
   );
 }

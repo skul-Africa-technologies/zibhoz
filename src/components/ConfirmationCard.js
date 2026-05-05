@@ -26,7 +26,7 @@ export default function ConfirmationCard({ visible, trade, onConfirm, onCancel }
           <View style={styles.divider} />
 
           <Text style={styles.confirmNote}>
-            Please listen carefully. This action cannot be undone. Tap CONFIRM to proceed or CANCEL to abort.
+            This trade will be submitted to the blockchain and cannot be undone. Say "confirm" or tap the button below to proceed, or say "cancel" to abort.
           </Text>
 
           {/* Actions */}

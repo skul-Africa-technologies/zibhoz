@@ -22,7 +22,8 @@ export default function OnboardScreen({ onNext }) {
         {/* Brand name */}
         <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
         <Text style={styles.logo}>ZIBHOZ</Text>
-        <Text style={styles.tagline}>Trade with your voice.{"\n"}Built for everyone.</Text>
+        <Text style={styles.taglineLine}>Trade with your voice.</Text>
+        <Text style={styles.taglineLine}>Built for everyone.</Text>
 
         {/* Feature bullets */}
         <View style={styles.features}>
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     textAlign: "center",
   },
-  tagline: {
+  taglineLine: {
     fontSize: 22,
     color: colors.textSecondary,
     fontWeight: "700",
