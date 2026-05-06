@@ -8,11 +8,12 @@ import {
   StyleSheet,
 } from "react-native";
 import colors from "../theme/colors";
+import SvgIcon from "../components/SvgIcon";
 
 const PERKS = [
-  { icon: "🎙", title: "Voice-First Trading", desc: "Speak to trade, explore, and track — hands-free" },
-  { icon: "⚡", title: "Early Access", desc: "Be first to use AI-powered prediction markets" },
-  { icon: "🎁", title: "Founding Member Perks", desc: "Exclusive rewards for early waitlist members" },
+  { icon: "mic",  isCustom: true,  title: "Voice-First Trading",    desc: "Speak to trade, explore, and track — hands-free" },
+  { icon: "⚡",  isCustom: false, title: "Early Access",             desc: "Be first to use AI-powered prediction markets" },
+  { icon: "🎁",  isCustom: false, title: "Founding Member Perks",    desc: "Exclusive rewards for early waitlist members" },
 ];
 
 export default function WaitlistScreen() {
@@ -44,7 +45,7 @@ export default function WaitlistScreen() {
           <View style={styles.orbRing2} />
           <View style={styles.orbOuter}>
             <View style={styles.orbInner}>
-              <Text style={styles.orbIcon}>🎙</Text>
+              <SvgIcon name="mic" size={24} color={colors.textOnYellow} strokeWidth={1.5} />
             </View>
           </View>
         </View>
@@ -63,7 +64,11 @@ export default function WaitlistScreen() {
           {PERKS.map((perk) => (
             <View key={perk.title} style={styles.perkRow}>
               <View style={styles.perkIcon}>
-                <Text style={styles.perkEmoji}>{perk.icon}</Text>
+                {perk.isCustom ? (
+                  <SvgIcon name={perk.icon} size={20} color={colors.primary} strokeWidth={1.8} />
+                ) : (
+                  <Text style={styles.perkEmoji}>{perk.icon}</Text>
+                )}
               </View>
               <View style={styles.perkMeta}>
                 <Text style={styles.perkTitle}>{perk.title}</Text>
