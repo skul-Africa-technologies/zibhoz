@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Pressable, Text, View, StyleSheet, Animated } from "react-native";
 import colors from "../theme/colors";
+import SvgIcon from "./SvgIcon";
 
 // voiceState: "idle" | "listening" | "processing" | "speaking"
 export default function MicButton({ onPress, voiceState = "idle" }) {
@@ -101,13 +102,22 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
             isProcessing && styles.processingOrb,
           ]}
         >
-          <Text
-            style={[styles.icon, { color: iconColor }]}
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-          >
-            {isProcessing ? "⟳" : isSpeaking ? "◉" : "🎙"}
-          </Text>
+          {isProcessing ? (
+            <Text
+              style={[styles.icon, { color: iconColor }]}
+              accessibilityElementsHidden
+              importantForAccessibility="no"
+            >
+              ⟳
+            </Text>
+          ) : (
+            <SvgIcon
+              name={isSpeaking ? "octagon" : "mic"}
+              size={32}
+              color={iconColor}
+              strokeWidth={isSpeaking ? 2 : 1.5}
+            />
+          )}
         </Animated.View>
       </Pressable>
 

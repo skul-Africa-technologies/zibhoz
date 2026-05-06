@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import colors from "../theme/colors";
+import SvgIcon from "../components/SvgIcon";
 
 const FEATURES = [
-  { icon: "🔊", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
-  { icon: "✅", title: "Safe Trades", desc: "Double-confirmed voice trade execution" },
-  { icon: "📊", title: "Live Portfolio", desc: "Real-time tracking by voice, always" },
+  { icon: "settings", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
+  { icon: "shield",   title: "Safe Trades",   desc: "Double-confirmed voice trade execution" },
+  { icon: "markets",  title: "Live Portfolio", desc: "Real-time tracking by voice, always" },
 ];
 
 export default function OnboardScreen({ onNext }) {
@@ -23,7 +24,7 @@ export default function OnboardScreen({ onNext }) {
           <View style={styles.orbRing2} />
           <View style={styles.orbOuter}>
             <View style={styles.orbInner}>
-              <Text style={styles.orbIcon}>🎙</Text>
+              <SvgIcon name="mic" size={28} color={colors.textOnYellow} strokeWidth={1.5} />
             </View>
           </View>
         </View>
@@ -40,7 +41,7 @@ export default function OnboardScreen({ onNext }) {
           {FEATURES.map((feat) => (
             <View key={feat.title} style={styles.featureRow}>
               <View style={styles.featureIcon}>
-                <Text style={styles.featureEmoji}>{feat.icon}</Text>
+                <SvgIcon name={feat.icon} size={22} color={colors.primary} strokeWidth={1.8} />
               </View>
               <View style={styles.featureMeta}>
                 <Text style={styles.featureTitle}>{feat.title}</Text>
