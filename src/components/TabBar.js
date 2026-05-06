@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import colors from "../theme/colors";
+import SvgIcon from "./SvgIcon";
 
-const TAB_ICONS = {
-  markets: "📈",
-  chat: "💬",
-  portfolio: "💼",
+const TAB_ICON_NAMES = {
+  markets: "markets",
+  chat: "chat",
+  portfolio: "portfolio",
 };
 
 export default function TabBar({ tabs, activeTab, onTabChange }) {
@@ -21,7 +22,11 @@ export default function TabBar({ tabs, activeTab, onTabChange }) {
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
           >
-            <Text style={styles.tabIcon}>{TAB_ICONS[tab] ?? "•"}</Text>
+            <SvgIcon
+              name={TAB_ICON_NAMES[tab] ?? "chat"}
+              size={18}
+              color={isActive ? colors.textOnYellow : colors.textMuted}
+            />
             <Text style={[styles.tab, isActive && styles.activeTab]}>
               {tab.toUpperCase()}
             </Text>
@@ -57,9 +62,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 4,
-  },
-  tabIcon: {
-    fontSize: 16,
   },
   tab: {
     color: colors.textMuted,
