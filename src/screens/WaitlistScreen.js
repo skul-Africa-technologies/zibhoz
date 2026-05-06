@@ -11,7 +11,7 @@ import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
 
 const PERKS = [
-  { icon: "mic",  isCustom: true,  title: "Voice-First Trading",    desc: "Speak to trade, explore, and track — hands-free" },
+  { icon: "voiceOrb",  isCustom: true,  title: "Voice-First Trading",    desc: "Speak to trade, explore, and track — hands-free" },
   { icon: "⚡",  isCustom: false, title: "Early Access",             desc: "Be first to use AI-powered prediction markets" },
   { icon: "🎁",  isCustom: false, title: "Founding Member Perks",    desc: "Exclusive rewards for early waitlist members" },
 ];
@@ -45,7 +45,7 @@ export default function WaitlistScreen() {
           <View style={styles.orbRing2} />
           <View style={styles.orbOuter}>
             <View style={styles.orbInner}>
-              <SvgIcon name="mic" size={24} color={colors.textOnYellow} strokeWidth={1.5} />
+              <SvgIcon name="voiceOrb" size={24} color={colors.textOnYellow} strokeWidth={1.5} />
             </View>
           </View>
         </View>

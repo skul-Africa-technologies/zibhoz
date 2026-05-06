@@ -4,7 +4,7 @@ import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
 
 const FEATURES = [
-  { icon: "settings", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
+  { icon: "voiceOrb", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
   { icon: "shield",   title: "Safe Trades",   desc: "Double-confirmed voice trade execution" },
   { icon: "markets",  title: "Live Portfolio", desc: "Real-time tracking by voice, always" },
 ];
@@ -24,7 +24,7 @@ export default function OnboardScreen({ onNext }) {
           <View style={styles.orbRing2} />
           <View style={styles.orbOuter}>
             <View style={styles.orbInner}>
-              <SvgIcon name="mic" size={28} color={colors.textOnYellow} strokeWidth={1.5} />
+              <SvgIcon name="voiceOrb" size={28} color={colors.textOnYellow} strokeWidth={1.5} />
             </View>
           </View>
         </View>

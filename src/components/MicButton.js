@@ -112,7 +112,7 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
             </Text>
           ) : (
             <SvgIcon
-              name={isSpeaking ? "octagon" : "mic"}
+              name={isSpeaking ? "octagon" : "voiceOrb"}
               size={32}
               color={iconColor}
               strokeWidth={isSpeaking ? 2 : 1.5}

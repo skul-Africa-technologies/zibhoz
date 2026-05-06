@@ -6,7 +6,7 @@
  *
  * Available names:
  *   hamburger, close, settings, shield, markets, portfolio,
- *   chat, mic, circle, octagon
+ *   chat, voiceOrb, octagon
  */
 import React from "react";
 import Svg, { Path, Circle as SvgCircle } from "react-native-svg";
@@ -65,7 +65,7 @@ const ICONS = {
     viewBox: "0 0 24 24",
   },
 
-  // assets/More_Horizontal.svg — 3 horizontal dots / chat / history
+  // assets/More_Horizontal.svg — 3 horizontal dots used for the chat/history tab
   chat: {
     paths: [
       "M17 12C17 12.5523 17.4477 13 18 13C18.5523 13 19 12.5523 19 12C19 11.4477 18.5523 11 18 11C17.4477 11 17 11.4477 17 12Z",
@@ -75,8 +75,8 @@ const ICONS = {
     viewBox: "0 0 24 24",
   },
 
-  // assets/Circle.svg — circle / mic / voice orb indicator
-  mic: {
+  // assets/Circle.svg — circular voice / orb indicator (used for mic button & voice orb)
+  voiceOrb: {
     paths: [
       "M3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12Z",
     ],

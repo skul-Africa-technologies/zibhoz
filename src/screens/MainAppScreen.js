@@ -573,7 +573,7 @@ export default function MainAppScreen() {
           <View style={{ gap: 12, paddingBottom: 40 }}>
             {[
               { icon: "settings", label: "Voice Output",  sub: "ElevenLabs · Neural TTS",          isCustom: true  },
-              { icon: "mic",      label: "Microphone",     sub: "Input sensitivity & language",      isCustom: true  },
+              { icon: "voiceOrb",      label: "Microphone",     sub: "Input sensitivity & language",      isCustom: true  },
               { icon: "♿",       label: "Accessibility",  sub: "Contrast, text size, screen reader", isCustom: false },
               { icon: "🔔",       label: "Notifications",  sub: "Market alerts & trade updates",     isCustom: false },
               { icon: "shield",   label: "Security",       sub: "Wallet & transaction settings",     isCustom: true  },
