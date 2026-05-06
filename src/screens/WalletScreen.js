@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Pressable, SafeAreaView, StyleSheet } from "react-native";
 import colors from "../theme/colors";
+import SvgIcon from "../components/SvgIcon";
 
 const WALLETS = [
   { id: "phantom", label: "Phantom Wallet", icon: "👻", sub: "Solana-native · Fast setup", tag: "POPULAR" },
@@ -24,8 +25,8 @@ export default function WalletScreen({ onConnect }) {
         <View style={styles.lockWrap}>
           <View style={styles.lockRing} />
           <View style={styles.lockOrb}>
-            <Text style={styles.lockIcon}>🔐</Text>
-          </View>
+              <SvgIcon name="shield" size={32} color={colors.primary} strokeWidth={1.8} />
+            </View>
         </View>
 
         {/* Heading */}

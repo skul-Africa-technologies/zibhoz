@@ -26,6 +26,7 @@ import ChatBubble from "../components/ChatBubble";
 import MicButton from "../components/MicButton";
 import ConfirmationCard from "../components/ConfirmationCard";
 import PortfolioCard from "../components/PortfolioCard";
+import SvgIcon from "../components/SvgIcon";
 
 /* ─────────────────────────────────────────────────────────
    VOICE PHASE CONFIG
@@ -114,7 +115,7 @@ function VoiceResultCard({ result, onDismiss }) {
           <Text style={[styles.resultAiText, { color: "#0ECB81", marginTop: 4 }]}>▲ +$19.80 this week</Text>
           <View style={styles.resultMetaRow}>
             <Text style={styles.resultMeta}>3 open positions</Text>
-            <Text style={styles.resultMeta}>Tap 💼 for details</Text>
+            <Text style={styles.resultMeta}>Tap Portfolio for details</Text>
           </View>
         </>
       )}
@@ -147,7 +148,7 @@ function VoiceResultCard({ result, onDismiss }) {
 /* ─────────────────────────────────────────────────────────
    BOTTOM DRAWER — slides up from bottom icon tap
 ───────────────────────────────────────────── */
-function Drawer({ visible, title, onClose, children }) {
+function Drawer({ visible, title, titleIcon, onClose, children }) {
   const slideY = useRef(new Animated.Value(700)).current;
 
   useEffect(() => {
@@ -172,9 +173,14 @@ function Drawer({ visible, title, onClose, children }) {
         <Animated.View style={[styles.drawerSheet, { transform: [{ translateY: slideY }] }]}>
           <View style={styles.drawerHandle} />
           <View style={styles.drawerHeader}>
-            <Text style={styles.drawerTitle}>{title}</Text>
+            <View style={styles.drawerTitleRow}>
+              {titleIcon ? (
+                <SvgIcon name={titleIcon} size={18} color={colors.primary} strokeWidth={1.8} />
+              ) : null}
+              <Text style={styles.drawerTitle}>{title}</Text>
+            </View>
             <Pressable onPress={onClose} style={styles.drawerClose} accessibilityLabel="Close" accessibilityRole="button">
-              <Text style={styles.drawerCloseText}>✕</Text>
+              <SvgIcon name="close" size={20} color={colors.textMuted} />
             </Pressable>
           </View>
           {children}
@@ -417,11 +423,11 @@ export default function MainAppScreen() {
 
   /* ── Bottom nav icons ── */
   const NAV = [
-    { id: "menu",      icon: "☰",  label: "Menu"      },
-    { id: "markets",   icon: "📊", label: "Markets"   },
-    { id: "chat",      icon: "💬", label: "History"   },
-    { id: "portfolio", icon: "💼", label: "Portfolio" },
-    { id: "settings",  icon: "⚙️", label: "Settings"  },
+    { id: "menu",      icon: "hamburger", label: "Menu"      },
+    { id: "markets",   icon: "markets",   label: "Markets"   },
+    { id: "chat",      icon: "chat",      label: "History"   },
+    { id: "portfolio", icon: "portfolio", label: "Portfolio" },
+    { id: "settings",  icon: "settings",  label: "Settings"  },
   ];
 
   return (
@@ -490,7 +496,7 @@ export default function MainAppScreen() {
             accessibilityRole="button"
             accessibilityLabel={`Open ${n.label}`}
           >
-            <Text style={styles.navIcon}>{n.icon}</Text>
+            <SvgIcon name={n.icon} size={20} color={colors.textMuted} />
             <Text style={styles.navLabel}>{n.label}</Text>
           </Pressable>
         ))}
@@ -499,7 +505,7 @@ export default function MainAppScreen() {
       {/* ── DRAWERS ── */}
 
       {/* Markets drawer */}
-      <Drawer visible={drawer === "markets"} title="📊 Markets" onClose={() => setDrawer(null)}>
+      <Drawer visible={drawer === "markets"} title="Markets" titleIcon="markets" onClose={() => setDrawer(null)}>
         <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 12, paddingBottom: 40 }}>
             {MARKETS.map(item => (
@@ -527,7 +533,7 @@ export default function MainAppScreen() {
       </Drawer>
 
       {/* Chat / History drawer */}
-      <Drawer visible={drawer === "chat"} title="💬 Voice History" onClose={() => setDrawer(null)}>
+      <Drawer visible={drawer === "chat"} title="Voice History" titleIcon="chat" onClose={() => setDrawer(null)}>
         <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 10, paddingBottom: 40 }}>
             {messages.map(item => (
@@ -538,7 +544,7 @@ export default function MainAppScreen() {
       </Drawer>
 
       {/* Portfolio drawer */}
-      <Drawer visible={drawer === "portfolio"} title="💼 Portfolio" onClose={() => setDrawer(null)}>
+      <Drawer visible={drawer === "portfolio"} title="Portfolio" titleIcon="portfolio" onClose={() => setDrawer(null)}>
         {/* Summary */}
         <View style={styles.portfolioSummary}>
           <Text style={styles.portfolioSummaryLabel}>TOTAL VALUE</Text>
@@ -562,15 +568,15 @@ export default function MainAppScreen() {
       </Drawer>
 
       {/* Settings drawer */}
-      <Drawer visible={drawer === "settings"} title="⚙️ Settings" onClose={() => setDrawer(null)}>
+      <Drawer visible={drawer === "settings"} title="Settings" titleIcon="settings" onClose={() => setDrawer(null)}>
         <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 12, paddingBottom: 40 }}>
             {[
-              { icon: "🔊", label: "Voice Output",    sub: "ElevenLabs · Neural TTS"        },
-              { icon: "🎙️", label: "Microphone",      sub: "Input sensitivity & language"   },
-              { icon: "♿", label: "Accessibility",   sub: "Contrast, text size, screen reader" },
-              { icon: "🔔", label: "Notifications",   sub: "Market alerts & trade updates"  },
-              { icon: "🔐", label: "Security",        sub: "Wallet & transaction settings"  },
+              { icon: "settings", label: "Voice Output",  sub: "ElevenLabs · Neural TTS",          isCustom: true  },
+              { icon: "voiceOrb",      label: "Microphone",     sub: "Input sensitivity & language",      isCustom: true  },
+              { icon: "♿",       label: "Accessibility",  sub: "Contrast, text size, screen reader", isCustom: false },
+              { icon: "🔔",       label: "Notifications",  sub: "Market alerts & trade updates",     isCustom: false },
+              { icon: "shield",   label: "Security",       sub: "Wallet & transaction settings",     isCustom: true  },
             ].map(s => (
               <Pressable
                 key={s.label}
@@ -578,7 +584,11 @@ export default function MainAppScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={`${s.label}. ${s.sub}`}
               >
-                <Text style={styles.settingIcon}>{s.icon}</Text>
+                {s.isCustom ? (
+                  <SvgIcon name={s.icon} size={20} color={colors.primary} strokeWidth={1.8} />
+                ) : (
+                  <Text style={styles.settingIcon}>{s.icon}</Text>
+                )}
                 <View style={{ flex: 1 }}>
                   <Text style={styles.settingLabel}>{s.label}</Text>
                   <Text style={styles.settingSub}>{s.sub}</Text>
@@ -591,16 +601,16 @@ export default function MainAppScreen() {
       </Drawer>
 
       {/* Menu drawer */}
-      <Drawer visible={drawer === "menu"} title="☰ Menu" onClose={() => setDrawer(null)}>
+      <Drawer visible={drawer === "menu"} title="Menu" titleIcon="hamburger" onClose={() => setDrawer(null)}>
         <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 12, paddingBottom: 40 }}>
             {[
-              { icon: "🏠", label: "Home",          action: () => setDrawer(null) },
-              { icon: "📊", label: "Markets",       action: () => setDrawer("markets") },
-              { icon: "💼", label: "Portfolio",     action: () => setDrawer("portfolio") },
-              { icon: "💬", label: "Voice History", action: () => setDrawer("chat") },
-              { icon: "⚙️", label: "Settings",      action: () => setDrawer("settings") },
-              { icon: "❓", label: "Help & Docs",   action: () => {} },
+              { icon: "🏠",       label: "Home",          action: () => setDrawer(null),          isCustom: false },
+              { icon: "markets",  label: "Markets",       action: () => setDrawer("markets"),      isCustom: true  },
+              { icon: "portfolio",label: "Portfolio",     action: () => setDrawer("portfolio"),    isCustom: true  },
+              { icon: "chat",     label: "Voice History", action: () => setDrawer("chat"),         isCustom: true  },
+              { icon: "settings", label: "Settings",      action: () => setDrawer("settings"),     isCustom: true  },
+              { icon: "❓",       label: "Help & Docs",   action: () => {},                        isCustom: false },
             ].map(m => (
               <Pressable
                 key={m.label}
@@ -609,7 +619,11 @@ export default function MainAppScreen() {
                 accessibilityRole="menuitem"
                 accessibilityLabel={m.label}
               >
-                <Text style={styles.menuIcon}>{m.icon}</Text>
+                {m.isCustom ? (
+                  <SvgIcon name={m.icon} size={20} color={colors.primary} strokeWidth={1.8} />
+                ) : (
+                  <Text style={styles.menuIcon}>{m.icon}</Text>
+                )}
                 <Text style={styles.menuLabel}>{m.label}</Text>
                 <Text style={styles.settingChevron}>›</Text>
               </Pressable>
@@ -903,9 +917,6 @@ const styles = StyleSheet.create({
     gap: 3,
     paddingVertical: 4,
   },
-  navIcon: {
-    fontSize: 20,
-  },
   navLabel: {
     color: "rgba(255,255,255,0.3)",
     fontSize: 9,
@@ -946,6 +957,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.06)",
     marginBottom: 14,
+  },
+  drawerTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   drawerTitle: {
     color: "#fff",
