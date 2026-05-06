@@ -1,49 +1,56 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ThrottlerGuard } from '@nestjs/throttler';
+import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const reflector = app.get(Reflector);
   app.set('trust proxy', 1);
 
-  // 🔒 Basic security
-  app.use(helmet());
   app.use(
-    rateLimit({
-      windowMs: 15 * 60 * 1000,
-      max: 200, // increase a bit for dev testing
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", "data:", "https:"],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
     }),
   );
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT') || 3001;
+  const corsOrigin = configService.get<string>('CORS_ORIGIN') || 'http://localhost:3000';
 
-  // 🌍 CORS (allow all during testing)
   app.enableCors({
-    origin: '*', // 👈 allow all origins for now
+    origin: corsOrigin,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-    credentials: false, // keep false since origin is '*'
+    credentials: true,
   });
 
-  // 🌐 Global API prefix
   app.setGlobalPrefix('api/v1');
 
-  // 🧰 Global ValidationPipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
+      forbidNonWhitelisted: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },
     }),
   );
 
-  // 📘 Swagger setup
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('SkulAfrica API')
     .setDescription('API documentation for SkulAfrica backend')
@@ -55,8 +62,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(PORT, '0.0.0.0');
-  console.log(`🚀 Server running on http://localhost:${PORT}/api/v1`);
-  console.log(`📘 Swagger docs available at http://localhost:${PORT}/api`);
+  console.log(`Server running on http://localhost:${PORT}/api/v1`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/api`);
 }
 
 bootstrap();
