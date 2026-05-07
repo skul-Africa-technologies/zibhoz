@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   Pressable,
   SafeAreaView,
@@ -53,7 +54,7 @@ export default function WaitlistScreen() {
         {/* Brand */}
         <View style={styles.brandBlock}>
           <Text style={styles.kicker}>JOIN THE WAITLIST</Text>
-          <Text style={styles.logo}>ZIBHOZ</Text>
+          <Image source={require("../../assets/zibhoz.png")} style={styles.logo} resizeMode="contain" />
           <Text style={styles.tagline}>
             Voice-first prediction markets.{"\n"}Be first in line.
           </Text>
@@ -218,11 +219,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   logo: {
-    fontSize: 44,
-    fontWeight: "900",
-    letterSpacing: 5,
-    color: colors.textPrimary,
-    textAlign: "center",
+    width: 220,
+    height: 58,
   },
   tagline: {
     fontSize: 16,
