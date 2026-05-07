@@ -12,8 +12,8 @@ import SvgIcon from "../components/SvgIcon";
 
 const PERKS = [
   { icon: "voiceOrb",  isCustom: true,  title: "Voice-First Trading",    desc: "Speak to trade, explore, and track — hands-free" },
-  { icon: "⚡",  isCustom: false, title: "Early Access",             desc: "Be first to use AI-powered prediction markets" },
-  { icon: "🎁",  isCustom: false, title: "Founding Member Perks",    desc: "Exclusive rewards for early waitlist members" },
+  { icon: "bolt",      isCustom: true,  title: "Early Access",             desc: "Be first to use AI-powered prediction markets" },
+  { icon: "gift",      isCustom: true,  title: "Founding Member Perks",    desc: "Exclusive rewards for early waitlist members" },
 ];
 
 export default function WaitlistScreen() {
