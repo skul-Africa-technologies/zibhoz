@@ -5,10 +5,8 @@ import {
   MaxLength,
   IsEnum,
   IsOptional,
-  IsBoolean,
-  IsDate,
+  Matches,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from '../../auth/interfaces/jwt-payload.interface';
 
@@ -41,8 +39,13 @@ export class CreateUserDto {
 
   @ApiPropertyOptional({ type: Boolean, description: 'Email verified status' })
   @IsOptional()
-  @IsBoolean()
   isEmailVerified?: boolean;
+
+  @ApiPropertyOptional({ type: String, description: 'Full name' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  name?: string;
 
   @ApiPropertyOptional({ type: String, description: 'Verification token hash' })
   @IsOptional()
@@ -55,6 +58,5 @@ export class CreateUserDto {
     description: 'Verification expiry date',
   })
   @IsOptional()
-  @IsDate()
   verificationExpiry?: Date;
 }

@@ -15,6 +15,7 @@ import { ThrottlerGuard } from './auth/guards/throttler.guard';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { jwtValidationSchema } from './config/jwt.config';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { jwtValidationSchema } from './config/jwt.config';
     PrismaModule,
     AuthModule,
     UsersModule,
+    EmailModule,
   ],
 
   controllers: [AppController],
