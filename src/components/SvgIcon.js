@@ -134,6 +134,7 @@ const ICONS = {
 export default function SvgIcon({ name, size = 24, color = "#FFFFFF", strokeWidth = 2 }) {
   const icon = ICONS[name];
   if (!icon) return null;
+  const isFillIcon = !!icon.fill;
 
   return (
     <Svg
@@ -146,9 +147,9 @@ export default function SvgIcon({ name, size = 24, color = "#FFFFFF", strokeWidt
         <Path
           key={i}
           d={d}
-          stroke={icon.fill ? "none" : color}
-          strokeWidth={icon.fill ? 0 : strokeWidth}
-          fill={icon.fill ? color : "none"}
+          stroke={isFillIcon ? "none" : color}
+          strokeWidth={isFillIcon ? 0 : strokeWidth}
+          fill={isFillIcon ? color : "none"}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
