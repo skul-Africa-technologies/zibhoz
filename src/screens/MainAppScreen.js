@@ -33,7 +33,7 @@ import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCom
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Tap the mic, then speak your command"              },
+  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Listening starts automatically"              },
   listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
   processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
@@ -368,6 +368,7 @@ export default function MainAppScreen() {
 
   const msgCounter = useRef(CHAT.length);
   const stopListeningRef = useRef(null);
+  const hasAutoStartedListeningRef = useRef(false);
 
   const runResolvedIntent = useCallback((commandText) => {
     const command = (commandText || VOICE_FALLBACK_COMMAND).toLowerCase();
@@ -434,9 +435,7 @@ export default function MainAppScreen() {
     setTimeout(() => setVoicePhase("idle"), 1400);
   }, []);
 
-  /* ── Voice mic handler ── */
-  const handleMicPress = useCallback(() => {
-    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+  const startListening = useCallback(() => {
     setVoiceResult(null);
     stopListeningRef.current?.();
     AccessibilityInfo.announceForAccessibility("What would you like to do?");
@@ -469,7 +468,20 @@ export default function MainAppScreen() {
       setMessages(prev => [...prev, { id: `msg-${msgCounter.current}`, role: "user", text: fallbackCommand }]);
       setTimeout(() => runResolvedIntent(fallbackCommand), 900);
     }, 1200);
-  }, [voicePhase, confirmTrade, txResult, runResolvedIntent]);
+  }, [runResolvedIntent]);
+
+  /* ── Voice mic handler ── */
+  const handleMicPress = useCallback(() => {
+    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+    startListening();
+  }, [voicePhase, confirmTrade, txResult, startListening]);
+
+  useEffect(() => {
+    if (hasAutoStartedListeningRef.current) return;
+    hasAutoStartedListeningRef.current = true;
+    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+    startListening();
+  }, [voicePhase, confirmTrade, txResult, startListening]);
 
   useEffect(() => () => stopListeningRef.current?.(), []);
 
