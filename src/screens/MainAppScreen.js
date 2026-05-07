@@ -33,7 +33,7 @@ import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCom
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Tap the mic, then speak your command"              },
+  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Speak your command anytime"              },
   listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
   processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
@@ -368,6 +368,7 @@ export default function MainAppScreen() {
 
   const msgCounter = useRef(CHAT.length);
   const stopListeningRef = useRef(null);
+  const hasAutoStartedListeningRef = useRef(false);
 
   const runResolvedIntent = useCallback((commandText) => {
     const command = (commandText || VOICE_FALLBACK_COMMAND).toLowerCase();
@@ -470,6 +471,12 @@ export default function MainAppScreen() {
       setTimeout(() => runResolvedIntent(fallbackCommand), 900);
     }, 1200);
   }, [voicePhase, confirmTrade, txResult, runResolvedIntent]);
+
+  useEffect(() => {
+    if (hasAutoStartedListeningRef.current) return;
+    hasAutoStartedListeningRef.current = true;
+    handleMicPress();
+  }, [handleMicPress]);
 
   useEffect(() => () => stopListeningRef.current?.(), []);
 
