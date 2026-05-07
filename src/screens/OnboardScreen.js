@@ -1,7 +1,9 @@
-import React from "react";
-import { View, Text, Pressable, SafeAreaView, StyleSheet } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, SafeAreaView, StyleSheet, AccessibilityInfo, Image } from "react-native";
 import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
+import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCommands";
+const VOICE_COMMAND_RETRY_DELAY_MS = 900;
 
 const FEATURES = [
   { icon: "voiceOrb", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
@@ -10,6 +12,50 @@ const FEATURES = [
 ];
 
 export default function OnboardScreen({ onNext }) {
+  const [listening, setListening] = useState(false);
+  const [heardCommand, setHeardCommand] = useState("");
+  const stopListeningRef = useRef(null);
+
+  const handleVoiceCommand = useCallback((command) => {
+    if (!command) {
+      AccessibilityInfo.announceForAccessibility("I didn't catch that. Say continue to move on.");
+      return false;
+    }
+    setHeardCommand(command);
+    if (command.includes("continue") || command.includes("next") || command.includes("start")) {
+      AccessibilityInfo.announceForAccessibility("Great. Moving to wallet connection.");
+      onNext();
+      return true;
+    }
+    AccessibilityInfo.announceForAccessibility("Command not recognized. Say continue to move on.");
+    return false;
+  }, [onNext]);
+
+  const startVoicePrompt = useCallback(() => {
+    if (!isVoiceRecognitionSupported()) return;
+    stopListeningRef.current?.();
+    setListening(true);
+    AccessibilityInfo.announceForAccessibility("Welcome to Zibhoz. Say continue to start wallet setup.");
+    stopListeningRef.current = listenForCommand({
+      timeoutMs: 5000,
+      onResult: (command) => {
+        setListening(false);
+        const done = handleVoiceCommand(command);
+        if (!done) setTimeout(startVoicePrompt, VOICE_COMMAND_RETRY_DELAY_MS);
+      },
+      onError: () => {
+        setListening(false);
+        setTimeout(startVoicePrompt, VOICE_COMMAND_RETRY_DELAY_MS);
+      },
+      onEnd: () => setListening(false),
+    });
+  }, [handleVoiceCommand]);
+
+  useEffect(() => {
+    startVoicePrompt();
+    return () => stopListeningRef.current?.();
+  }, [startVoicePrompt]);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Glow accents */}
@@ -32,7 +78,13 @@ export default function OnboardScreen({ onNext }) {
         {/* Brand */}
         <View style={styles.brandBlock}>
           <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
-          <Text style={styles.logo}>ZIBHOZ</Text>
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.logo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.tagline}>Trade with your voice.{"\n"}Built for everyone.</Text>
         </View>
 
@@ -53,9 +105,18 @@ export default function OnboardScreen({ onNext }) {
 
         {/* CTA */}
         <Pressable style={styles.button} onPress={onNext}>
-          <Text style={styles.buttonText}>Get Started  →</Text>
+          <Text style={styles.buttonText}>Continue to Wallet →</Text>
         </Pressable>
 
+        <Text style={styles.voiceHint}>
+          {isVoiceRecognitionSupported()
+            ? listening
+              ? "Listening… say “continue”"
+              : heardCommand
+                ? `Heard: “${heardCommand}”`
+                : "Say “continue” to move forward"
+            : "Voice recognition unavailable on this device. Use the button above."}
+        </Text>
         <Text style={styles.footnote}>No account required · Wallet-powered</Text>
       </View>
     </SafeAreaView>
@@ -158,11 +219,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   logo: {
-    fontSize: 48,
-    fontWeight: "900",
-    letterSpacing: 5,
-    color: colors.textPrimary,
-    textAlign: "center",
+    width: 220,
+    height: 60,
   },
   tagline: {
     fontSize: 18,
@@ -243,5 +301,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
   },
+  voiceHint: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "600",
+  },
 });
-

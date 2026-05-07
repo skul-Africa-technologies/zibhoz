@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   Pressable,
   SafeAreaView,
@@ -12,8 +13,8 @@ import SvgIcon from "../components/SvgIcon";
 
 const PERKS = [
   { icon: "voiceOrb",  isCustom: true,  title: "Voice-First Trading",    desc: "Speak to trade, explore, and track — hands-free" },
-  { icon: "⚡",  isCustom: false, title: "Early Access",             desc: "Be first to use AI-powered prediction markets" },
-  { icon: "🎁",  isCustom: false, title: "Founding Member Perks",    desc: "Exclusive rewards for early waitlist members" },
+  { icon: "bolt",      isCustom: true,  title: "Early Access",             desc: "Be first to use AI-powered prediction markets" },
+  { icon: "gift",      isCustom: true,  title: "Founding Member Perks",    desc: "Exclusive rewards for early waitlist members" },
 ];
 
 export default function WaitlistScreen() {
@@ -53,7 +54,13 @@ export default function WaitlistScreen() {
         {/* Brand */}
         <View style={styles.brandBlock}>
           <Text style={styles.kicker}>JOIN THE WAITLIST</Text>
-          <Text style={styles.logo}>ZIBHOZ</Text>
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.logo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.tagline}>
             Voice-first prediction markets.{"\n"}Be first in line.
           </Text>
@@ -81,7 +88,9 @@ export default function WaitlistScreen() {
         {/* Form */}
         {submitted ? (
           <View style={styles.successBox}>
-            <Text style={styles.successIcon}>✅</Text>
+            <View style={styles.successIcon}>
+              <SvgIcon name="check" size={22} color={colors.primary} strokeWidth={1.8} />
+            </View>
             <Text style={styles.successTitle}>You're on the list!</Text>
             <Text style={styles.successDesc}>
               We'll notify you at{" "}
@@ -216,11 +225,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   logo: {
-    fontSize: 44,
-    fontWeight: "900",
-    letterSpacing: 5,
-    color: colors.textPrimary,
-    textAlign: "center",
+    width: 220,
+    height: 60,
   },
   tagline: {
     fontSize: 16,
@@ -333,7 +339,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   successIcon: {
-    fontSize: 32,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primaryDim,
+    alignItems: "center",
+    justifyContent: "center",
   },
   successTitle: {
     color: colors.primary,

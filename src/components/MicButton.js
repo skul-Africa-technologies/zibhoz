@@ -64,7 +64,7 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
   }, [voiceState, pulse, outerPulse, ring2Pulse, isListening, isSpeaking]);
 
   const stateLabel = {
-    idle: "Tap to speak",
+    idle: "Awaiting command",
     listening: "Listening...",
     processing: "Thinking...",
     speaking: "Speaking...",
@@ -89,10 +89,10 @@ export default function MicButton({ onPress, voiceState = "idle" }) {
         accessibilityRole="button"
         accessibilityLabel={
           voiceState === "idle"
-            ? "Activate microphone to speak"
+            ? "Voice assistant is listening for commands"
             : `Voice state: ${voiceState}`
         }
-        accessibilityHint="Double tap to start or stop voice input"
+        accessibilityHint="You can tap to manually restart listening"
       >
         <Animated.View
           style={[
@@ -198,4 +198,3 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 });
-

@@ -27,17 +27,30 @@ import MicButton from "../components/MicButton";
 import ConfirmationCard from "../components/ConfirmationCard";
 import PortfolioCard from "../components/PortfolioCard";
 import SvgIcon from "../components/SvgIcon";
+import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCommands";
 
 /* ─────────────────────────────────────────────────────────
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Tap to speak",          color: "#FFFFFF",         sub: "Ask about any market"         },
+  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Listening starts automatically"              },
   listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
   processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
-  error:      { label: "Couldn't hear you",     color: "#F6465D",         sub: "Tap to try again"              },
+  error:      { label: "Couldn't hear you",     color: "#F6465D",         sub: "Listening again in a moment"   },
 };
+const VOICE_FALLBACK_COMMAND = "show me markets";
+
+function resolveVoiceIntent(command) {
+  const hasWord = (word) => new RegExp(`\\b${word}\\b`, "i").test(command);
+  if (hasWord("portfolio")) return { type: "portfolio" };
+  if (hasWord("history") || hasWord("chat")) return { type: "chat" };
+  if (hasWord("settings") || hasWord("setting")) return { type: "settings" };
+  if (hasWord("menu")) return { type: "menu" };
+  if (hasWord("trade")) return { type: "trade" };
+  if (hasWord("market") || hasWord("markets") || hasWord("btc")) return { type: "market" };
+  return { type: "unknown" };
+}
 
 /* ─────────────────────────────────────────────────────────
    RESULT CARD — shown boldly after voice interaction
@@ -311,7 +324,14 @@ function TxResult({ result, onClose }) {
     <Modal transparent animationType="fade" visible accessibilityViewIsModal>
       <View style={styles.txBackdrop}>
         <View style={[styles.txCard, { borderColor: ok ? "rgba(14,203,129,.3)" : pending ? "rgba(247,147,26,.3)" : "rgba(246,70,93,.3)" }]}>
-          <Text style={styles.txIcon}>{ok ? "✅" : pending ? "⏳" : "❌"}</Text>
+          <View style={styles.txIconWrap}>
+            <SvgIcon
+              name={ok ? "check" : pending ? "timer" : "closeCircle"}
+              size={28}
+              color={ok ? "#0ECB81" : pending ? "#F7931A" : colors.negative}
+              strokeWidth={2}
+            />
+          </View>
           <Text style={styles.txTitle}>{ok ? "Trade Executed!" : pending ? "Pending…" : result.errorTitle ?? "Failed"}</Text>
           <Text style={styles.txBody}>
             {ok      && "0.5 SOL placed on YES. Est. return: ~0.71 SOL."}
@@ -347,33 +367,46 @@ export default function MainAppScreen() {
   const [drawer, setDrawer] = useState(null); // "markets" | "chat" | "portfolio" | "settings" | "menu"
 
   const msgCounter = useRef(CHAT.length);
+  const stopListeningRef = useRef(null);
+  const hasAutoStartedListeningRef = useRef(false);
 
-  /* ── Voice mic handler ── */
-  const handleMicPress = useCallback(() => {
-    if (voicePhase !== "idle") return;
-    setVoiceResult(null);
-    AccessibilityInfo.announceForAccessibility("Listening for your command");
+  const runResolvedIntent = useCallback((commandText) => {
+    const command = (commandText || VOICE_FALLBACK_COMMAND).toLowerCase();
+    const intent = resolveVoiceIntent(command);
+    setVoicePhase("speaking");
 
-    setVoicePhase("listening");
-
-    setTimeout(() => {
-      setVoicePhase("processing");
-      msgCounter.current += 1;
-      setMessages(prev => [...prev, {
-        id: `msg-${msgCounter.current}`,
-        role: "user",
-        text: "Tell me about the BTC market",
-      }]);
-    }, 1800);
-
-    setTimeout(() => {
-      setVoicePhase("speaking");
+    if (intent.type === "portfolio") {
+      setDrawer("portfolio");
+      setVoiceResult({
+        type: "portfolio",
+        text: "Opening your portfolio snapshot.",
+      });
+      AccessibilityInfo.announceForAccessibility("Opening portfolio.");
+    } else if (intent.type === "chat") {
+      setDrawer("chat");
+      setVoiceResult({ type: "text", text: "Opening your voice history now." });
+      AccessibilityInfo.announceForAccessibility("Opening voice history.");
+    } else if (intent.type === "settings") {
+      setDrawer("settings");
+      setVoiceResult({ type: "text", text: "Opening settings." });
+      AccessibilityInfo.announceForAccessibility("Opening settings.");
+    } else if (intent.type === "menu") {
+      setDrawer("menu");
+      setVoiceResult({ type: "text", text: "Opening menu." });
+      AccessibilityInfo.announceForAccessibility("Opening menu.");
+    } else if (intent.type === "trade") {
+      setVoiceResult(null);
+      setConfirmTrade({
+        action: "BUY",
+        amount: "0.5 SOL",
+        outcome: "YES",
+        market: "Will BTC exceed $100K by June 2025?",
+      });
+      AccessibilityInfo.announceForAccessibility("Preparing trade confirmation.");
+    } else if (intent.type === "market") {
       const aiText = "BTC market: Will BTC exceed $100K by June? — 67% YES, 33% NO. Volume $2.4M. Want to place a trade?";
       msgCounter.current += 1;
       setMessages(prev => [...prev, { id: `msg-${msgCounter.current}`, role: "ai", text: aiText }]);
-      AccessibilityInfo.announceForAccessibility(aiText);
-
-      // Show bold result card
       setVoiceResult({
         type: "market",
         symbol: "BTC",
@@ -392,10 +425,65 @@ export default function MainAppScreen() {
           });
         },
       });
-    }, 3400);
+      AccessibilityInfo.announceForAccessibility(aiText);
+    } else {
+      const text = "I can open markets, portfolio, history, settings, or start a trade. What should I do?";
+      setVoiceResult({ type: "text", text });
+      AccessibilityInfo.announceForAccessibility(text);
+    }
 
-    setTimeout(() => setVoicePhase("idle"), 5800);
-  }, [voicePhase]);
+    setTimeout(() => setVoicePhase("idle"), 1400);
+  }, []);
+
+  const startListening = useCallback(() => {
+    setVoiceResult(null);
+    stopListeningRef.current?.();
+    AccessibilityInfo.announceForAccessibility("What would you like to do?");
+    setVoicePhase("listening");
+    const fallbackCommand = VOICE_FALLBACK_COMMAND;
+
+    if (isVoiceRecognitionSupported()) {
+      stopListeningRef.current = listenForCommand({
+        timeoutMs: 4200,
+        onResult: (heard) => {
+          setVoicePhase("processing");
+          const spoken = heard || fallbackCommand;
+          msgCounter.current += 1;
+          setMessages(prev => [...prev, { id: `msg-${msgCounter.current}`, role: "user", text: spoken }]);
+          setTimeout(() => runResolvedIntent(spoken), 900);
+        },
+        onError: () => {
+          setVoicePhase("processing");
+          msgCounter.current += 1;
+          setMessages(prev => [...prev, { id: `msg-${msgCounter.current}`, role: "user", text: fallbackCommand }]);
+          setTimeout(() => runResolvedIntent(fallbackCommand), 900);
+        },
+      });
+      return;
+    }
+
+    setTimeout(() => {
+      setVoicePhase("processing");
+      msgCounter.current += 1;
+      setMessages(prev => [...prev, { id: `msg-${msgCounter.current}`, role: "user", text: fallbackCommand }]);
+      setTimeout(() => runResolvedIntent(fallbackCommand), 900);
+    }, 1200);
+  }, [runResolvedIntent]);
+
+  /* ── Voice mic handler ── */
+  const handleMicPress = useCallback(() => {
+    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+    startListening();
+  }, [voicePhase, confirmTrade, txResult, startListening]);
+
+  useEffect(() => {
+    if (hasAutoStartedListeningRef.current) return;
+    hasAutoStartedListeningRef.current = true;
+    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+    startListening();
+  }, [voicePhase, confirmTrade, txResult, startListening]);
+
+  useEffect(() => () => stopListeningRef.current?.(), []);
 
   /* ── Confirm handlers ── */
   const handleConfirm = useCallback(() => {
@@ -439,7 +527,9 @@ export default function MainAppScreen() {
       {/* ── TOP BAR: just brand + status pill ── */}
       <View style={styles.topBar}>
         <View>
-          <Text style={styles.brand}>ZIBHOZ</Text>
+          <Text style={styles.brandLogo} accessibilityRole="header">
+            ZIBHOZ
+          </Text>
           <Text style={styles.brandSub}>Voice-first prediction markets</Text>
         </View>
         <View style={[styles.statusPill, { borderColor: `${phase.color}60` }]}>
@@ -574,8 +664,8 @@ export default function MainAppScreen() {
             {[
               { icon: "settings", label: "Voice Output",  sub: "ElevenLabs · Neural TTS",          isCustom: true  },
               { icon: "voiceOrb",      label: "Microphone",     sub: "Input sensitivity & language",      isCustom: true  },
-              { icon: "♿",       label: "Accessibility",  sub: "Contrast, text size, screen reader", isCustom: false },
-              { icon: "🔔",       label: "Notifications",  sub: "Market alerts & trade updates",     isCustom: false },
+              { icon: "accessibility", label: "Accessibility",  sub: "Contrast, text size, screen reader", isCustom: true },
+              { icon: "notifications", label: "Notifications",  sub: "Market alerts & trade updates",     isCustom: true },
               { icon: "shield",   label: "Security",       sub: "Wallet & transaction settings",     isCustom: true  },
             ].map(s => (
               <Pressable
@@ -605,12 +695,12 @@ export default function MainAppScreen() {
         <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 12, paddingBottom: 40 }}>
             {[
-              { icon: "🏠",       label: "Home",          action: () => setDrawer(null),          isCustom: false },
+              { icon: "home",     label: "Home",          action: () => setDrawer(null),          isCustom: true  },
               { icon: "markets",  label: "Markets",       action: () => setDrawer("markets"),      isCustom: true  },
               { icon: "portfolio",label: "Portfolio",     action: () => setDrawer("portfolio"),    isCustom: true  },
               { icon: "chat",     label: "Voice History", action: () => setDrawer("chat"),         isCustom: true  },
               { icon: "settings", label: "Settings",      action: () => setDrawer("settings"),     isCustom: true  },
-              { icon: "❓",       label: "Help & Docs",   action: () => {},                        isCustom: false },
+              { icon: "help",     label: "Help & Docs",   action: () => {},                        isCustom: true  },
             ].map(m => (
               <Pressable
                 key={m.label}
@@ -673,11 +763,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 6,
   },
-  brand: {
-    color: "#fff",
-    fontSize: 20,
+  brandLogo: {
+    color: "#FFFFFF",
+    fontSize: 28,
     fontWeight: "900",
-    letterSpacing: 4,
+    letterSpacing: 2.4,
+    lineHeight: 32,
   },
   brandSub: {
     color: "rgba(255,255,255,0.3)",
@@ -1077,7 +1168,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 10,
   },
-  txIcon:    { fontSize: 52 },
+  txIconWrap: { width: 48, height: 48, borderRadius: 24, borderWidth: 1, borderColor: "rgba(255,255,255,0.14)", backgroundColor: "rgba(255,255,255,0.04)", alignItems: "center", justifyContent: "center" },
   txTitle:   { color: "#fff", fontSize: 21, fontWeight: "900", textAlign: "center" },
   txBody:    { color: "rgba(255,255,255,0.4)", fontSize: 13, textAlign: "center", lineHeight: 20 },
   txHash:    { backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 10, padding: 12, width: "100%", alignItems: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.07)" },
