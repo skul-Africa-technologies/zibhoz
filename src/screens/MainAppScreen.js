@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  Image,
   ScrollView,
   Pressable,
   Animated,
@@ -34,7 +33,7 @@ import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCom
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Tap mic to start",      color: "#FFFFFF",         sub: "Tap the mic, then speak your command"              },
+  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Tap the mic, then speak your command"              },
   listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
   processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
@@ -516,13 +515,9 @@ export default function MainAppScreen() {
       {/* ── TOP BAR: just brand + status pill ── */}
       <View style={styles.topBar}>
         <View>
-          <Image
-            source={require("../../assets/zibhoz.png")}
-            style={styles.brandLogo}
-            resizeMode="contain"
-            accessibilityRole="image"
-            accessibilityLabel="Zibhoz logo"
-          />
+          <Text style={styles.brandLogo} accessibilityRole="header">
+            ZIBHOZ
+          </Text>
           <Text style={styles.brandSub}>Voice-first prediction markets</Text>
         </View>
         <View style={[styles.statusPill, { borderColor: `${phase.color}60` }]}>
@@ -757,8 +752,11 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
   },
   brandLogo: {
-    width: 132,
-    height: 36,
+    color: "#FFFFFF",
+    fontSize: 28,
+    fontWeight: "900",
+    letterSpacing: 2.4,
+    lineHeight: 32,
   },
   brandSub: {
     color: "rgba(255,255,255,0.3)",
