@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, Pressable, SafeAreaView, StyleSheet, AccessibilityInfo } from "react-native";
+import { View, Text, Pressable, SafeAreaView, StyleSheet, AccessibilityInfo, Image } from "react-native";
 import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
 import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCommands";
@@ -78,7 +78,13 @@ export default function OnboardScreen({ onNext }) {
         {/* Brand */}
         <View style={styles.brandBlock}>
           <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
-          <Text style={styles.logo}>ZIBHOZ</Text>
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.logo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.tagline}>Trade with your voice.{"\n"}Built for everyone.</Text>
         </View>
 
@@ -213,11 +219,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   logo: {
-    fontSize: 48,
-    fontWeight: "900",
-    letterSpacing: 5,
-    color: colors.textPrimary,
-    textAlign: "center",
+    width: 220,
+    height: 60,
   },
   tagline: {
     fontSize: 18,

@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  Image,
   ScrollView,
   Pressable,
   Animated,
@@ -33,17 +34,13 @@ import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCom
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Listening for command", color: "#FFFFFF",         sub: "Say markets, portfolio, history, settings, or trade" },
+  idle:       { label: "Tap mic to start",      color: "#FFFFFF",         sub: "Tap the mic, then speak your command"              },
   listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
   processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
   error:      { label: "Couldn't hear you",     color: "#F6465D",         sub: "Listening again in a moment"   },
 };
 const VOICE_FALLBACK_COMMAND = "show me markets";
-// Delay before re-starting the next automatic voice prompt.
-const AUTO_PROMPT_DELAY_MS = 900;
-// Slightly longer delay for non-web voice-recognition fallback mode.
-const AUTO_PROMPT_FALLBACK_DELAY_MS = 1500;
 
 function resolveVoiceIntent(command) {
   const hasWord = (word) => new RegExp(`\\b${word}\\b`, "i").test(command);
@@ -372,7 +369,6 @@ export default function MainAppScreen() {
 
   const msgCounter = useRef(CHAT.length);
   const stopListeningRef = useRef(null);
-  const autoPromptRef = useRef(() => {});
 
   const runResolvedIntent = useCallback((commandText) => {
     const command = (commandText || VOICE_FALLBACK_COMMAND).toLowerCase();
@@ -476,18 +472,6 @@ export default function MainAppScreen() {
     }, 1200);
   }, [voicePhase, confirmTrade, txResult, runResolvedIntent]);
 
-  useEffect(() => {
-    autoPromptRef.current = handleMicPress;
-  }, [handleMicPress]);
-
-  useEffect(() => {
-    if (voicePhase === "idle" && !confirmTrade && !txResult && !drawer) {
-      const delay = isVoiceRecognitionSupported() ? AUTO_PROMPT_DELAY_MS : AUTO_PROMPT_FALLBACK_DELAY_MS;
-      const timer = setTimeout(() => autoPromptRef.current(), delay);
-      return () => clearTimeout(timer);
-    }
-  }, [voicePhase, confirmTrade, txResult, drawer]);
-
   useEffect(() => () => stopListeningRef.current?.(), []);
 
   /* ── Confirm handlers ── */
@@ -532,7 +516,13 @@ export default function MainAppScreen() {
       {/* ── TOP BAR: just brand + status pill ── */}
       <View style={styles.topBar}>
         <View>
-          <Text style={styles.brand}>ZIBHOZ</Text>
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.brandLogo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.brandSub}>Voice-first prediction markets</Text>
         </View>
         <View style={[styles.statusPill, { borderColor: `${phase.color}60` }]}>
@@ -766,11 +756,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 6,
   },
-  brand: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "900",
-    letterSpacing: 4,
+  brandLogo: {
+    width: 132,
+    height: 36,
   },
   brandSub: {
     color: "rgba(255,255,255,0.3)",
