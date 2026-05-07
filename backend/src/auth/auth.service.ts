@@ -12,6 +12,7 @@ import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
 import { Role } from './interfaces/jwt-payload.interface';
 import { SafeUserDto } from './dto/safe-user.dto';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -19,10 +20,11 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private emailService: EmailService,
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const { email, password, role = Role.STUDENT } = registerDto;
+    const { email, password, role = Role.STUDENT, name } = registerDto;
     const existingUser = await this.usersService.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
@@ -36,12 +38,18 @@ export class AuthService {
     const user = await this.usersService.create({
       email,
       password: hashedPassword,
+      name,
       role,
       verificationToken: verificationTokenHash,
       verificationExpiry,
     });
 
-    await this.sendVerificationEmail(email, verificationTokenRaw);
+    await this.emailService.sendVerificationEmail(
+      email,
+      verificationTokenRaw,
+      user.id,
+      name,
+    );
     const safeUser = this.toSafeUser(user);
 
     return {
@@ -126,6 +134,7 @@ export class AuthService {
       throw new ForbiddenException('Verification token has expired');
     }
     await this.usersService.verifyEmail(user.id);
+    await this.emailService.sendWelcomeEmail(user.email, user.id);
     return { message: 'Email verified successfully' };
   }
 
@@ -182,15 +191,6 @@ export class AuthService {
 
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
-  }
-
-  private async sendVerificationEmail(email: string, token: string) {
-    const verificationUrl = `${process.env.APP_URL || 'http://localhost:3000'}/api/v1/auth/verify-email?token=${token}`;
-    console.log(`[EMAIL] To: ${email}`);
-    console.log(`[EMAIL] Subject: Verify your email`);
-    console.log(
-      `[EMAIL] Body: Please click the link to verify: ${verificationUrl}`,
-    );
   }
 
   private toSafeUser(user: any): SafeUserDto {

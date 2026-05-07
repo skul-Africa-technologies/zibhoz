@@ -39,4 +39,14 @@ export class RegisterDto {
   @IsOptional()
   @IsEnum(Role, { message: 'Role must be STUDENT, TEACHER, or ADMIN' })
   role?: Role;
+
+  @ApiProperty({
+    example: 'John Doe',
+    description: 'Full name',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  name?: string;
 }

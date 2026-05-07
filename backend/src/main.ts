@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { AppModule } from './app.module';
@@ -38,6 +39,32 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // Get raw Express app and add /api routes BEFORE the global prefix is applied
+  const rawExpressApp = app.getHttpAdapter().getInstance();
+  rawExpressApp.get('/api', (req: any, res: any) => {
+    res.json({
+      name: 'Zibhoz API',
+      version: '1.0',
+      status: 'operational',
+      documentation: '/api/docs',
+      api: '/api/v1',
+      endpoints: {
+        auth: '/api/v1/auth',
+        users: '/api/v1/users',
+      },
+    });
+  });
+
+  rawExpressApp.get('/api/info', (req: any, res: any) => {
+    res.json({
+      name: 'Zibhoz API',
+      version: '1.0',
+      status: 'operational',
+      documentation: '/api/docs',
+      api: '/api/v1',
+    });
+  });
+
   app.setGlobalPrefix('api/v1');
 
   app.useGlobalPipes(
@@ -51,6 +78,7 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
+  
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Zibhoz API')
     .setDescription('Authentication and user management API')
