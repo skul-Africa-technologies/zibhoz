@@ -81,7 +81,9 @@ export default function WaitlistScreen() {
         {/* Form */}
         {submitted ? (
           <View style={styles.successBox}>
-            <Text style={styles.successIcon}>✅</Text>
+            <View style={styles.successIcon}>
+              <SvgIcon name="check" size={22} color={colors.primary} strokeWidth={1.8} />
+            </View>
             <Text style={styles.successTitle}>You're on the list!</Text>
             <Text style={styles.successDesc}>
               We'll notify you at{" "}
@@ -333,7 +335,14 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   successIcon: {
-    fontSize: 32,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: colors.primaryBorder,
+    backgroundColor: colors.primaryDim,
+    alignItems: "center",
+    justifyContent: "center",
   },
   successTitle: {
     color: colors.primary,

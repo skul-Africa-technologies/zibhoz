@@ -1,20 +1,65 @@
-import React from "react";
-import { View, Text, Pressable, SafeAreaView, StyleSheet } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Pressable, SafeAreaView, StyleSheet, AccessibilityInfo } from "react-native";
 import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
+import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCommands";
 
 const WALLETS = [
-  { id: "phantom", label: "Phantom Wallet", icon: "👻", sub: "Solana-native · Fast setup", tag: "POPULAR" },
-  { id: "walletconnect", label: "WalletConnect", icon: "🔗", sub: "Multi-chain · Universal", tag: "MULTI-CHAIN" },
+  { id: "phantom", label: "Phantom Wallet", icon: "ghost", sub: "Solana-native · Fast setup", tag: "POPULAR" },
+  { id: "walletconnect", label: "WalletConnect", icon: "link", sub: "Multi-chain · Universal", tag: "MULTI-CHAIN" },
 ];
 
 const TRUST_ITEMS = [
-  { icon: "🛡", text: "Non-custodial" },
-  { icon: "🔒", text: "Encrypted" },
-  { icon: "✅", text: "Voice-confirmed" },
+  { icon: "shield", text: "Non-custodial" },
+  { icon: "lock", text: "Encrypted" },
+  { icon: "check", text: "Voice-confirmed" },
 ];
 
 export default function WalletScreen({ onConnect }) {
+  const [listening, setListening] = useState(false);
+  const [heardCommand, setHeardCommand] = useState("");
+  const stopListeningRef = useRef(null);
+
+  const handleWalletVoice = useCallback((command) => {
+    if (!command) {
+      AccessibilityInfo.announceForAccessibility("Please say phantom or wallet connect.");
+      return false;
+    }
+    setHeardCommand(command);
+    if (command.includes("phantom") || command.includes("wallet")) {
+      AccessibilityInfo.announceForAccessibility("Wallet selected. Opening main screen.");
+      onConnect();
+      return true;
+    }
+    AccessibilityInfo.announceForAccessibility("Command not recognized. Say phantom or wallet connect.");
+    return false;
+  }, [onConnect]);
+
+  const startWalletPrompt = useCallback(() => {
+    if (!isVoiceRecognitionSupported()) return;
+    stopListeningRef.current?.();
+    setListening(true);
+    AccessibilityInfo.announceForAccessibility("Say phantom or wallet connect to continue.");
+    stopListeningRef.current = listenForCommand({
+      timeoutMs: 5000,
+      onResult: (command) => {
+        setListening(false);
+        const done = handleWalletVoice(command);
+        if (!done) setTimeout(startWalletPrompt, 900);
+      },
+      onError: () => {
+        setListening(false);
+        setTimeout(startWalletPrompt, 900);
+      },
+      onEnd: () => setListening(false),
+    });
+  }, [handleWalletVoice]);
+
+  useEffect(() => {
+    startWalletPrompt();
+    return () => stopListeningRef.current?.();
+  }, [startWalletPrompt]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.glowTop} />
@@ -43,7 +88,7 @@ export default function WalletScreen({ onConnect }) {
           {WALLETS.map((wallet) => (
             <Pressable key={wallet.id} style={styles.card} onPress={onConnect}>
               <View style={styles.walletIcon}>
-                <Text style={styles.walletEmoji}>{wallet.icon}</Text>
+                <SvgIcon name={wallet.icon} size={24} color={colors.primary} strokeWidth={1.8} />
               </View>
               <View style={styles.cardMeta}>
                 <Text style={styles.cardLabel}>{wallet.label}</Text>
@@ -60,11 +105,21 @@ export default function WalletScreen({ onConnect }) {
         <View style={styles.trustRow}>
           {TRUST_ITEMS.map((item) => (
             <View key={item.text} style={styles.trustItem}>
-              <Text style={styles.trustIcon}>{item.icon}</Text>
+              <SvgIcon name={item.icon} size={16} color={colors.primary} strokeWidth={1.8} />
               <Text style={styles.trustText}>{item.text}</Text>
             </View>
           ))}
         </View>
+
+        <Text style={styles.voiceHint}>
+          {isVoiceRecognitionSupported()
+            ? listening
+              ? "Listening… say “phantom” or “wallet connect”"
+              : heardCommand
+                ? `Heard: “${heardCommand}”`
+                : "Say “phantom” or “wallet connect” to continue"
+            : "Voice recognition unavailable on this device. Use the wallet buttons above."}
+        </Text>
 
         {/* Safety note */}
         <View style={styles.safetyNote}>
@@ -194,9 +249,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexShrink: 0,
   },
-  walletEmoji: {
-    fontSize: 24,
-  },
   cardMeta: {
     flex: 1,
     gap: 4,
@@ -245,9 +297,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: colors.border,
   },
-  trustIcon: {
-    fontSize: 16,
-  },
   trustText: {
     color: colors.textMuted,
     fontSize: 10,
@@ -271,5 +320,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
   },
+  voiceHint: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textAlign: "center",
+    fontWeight: "600",
+  },
 });
-
