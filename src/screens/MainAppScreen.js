@@ -605,12 +605,12 @@ export default function MainAppScreen() {
         <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
           <View style={{ gap: 12, paddingBottom: 40 }}>
             {[
-              { icon: "🏠",       label: "Home",          action: () => setDrawer(null),          isCustom: false },
+              { icon: "home",     label: "Home",          action: () => setDrawer(null),          isCustom: true  },
               { icon: "markets",  label: "Markets",       action: () => setDrawer("markets"),      isCustom: true  },
               { icon: "portfolio",label: "Portfolio",     action: () => setDrawer("portfolio"),    isCustom: true  },
               { icon: "chat",     label: "Voice History", action: () => setDrawer("chat"),         isCustom: true  },
               { icon: "settings", label: "Settings",      action: () => setDrawer("settings"),     isCustom: true  },
-              { icon: "❓",       label: "Help & Docs",   action: () => {},                        isCustom: false },
+              { icon: "help",     label: "Help & Docs",   action: () => {},                        isCustom: true  },
             ].map(m => (
               <Pressable
                 key={m.label}
