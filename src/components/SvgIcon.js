@@ -116,7 +116,7 @@ const ICONS = {
     fill: true,
   },
 
-  // assets/mdi_high-voltage.svg — high voltage
+  // assets/mdi_high-voltage.svg — bolt
   bolt: {
     paths: ["M96 16L8 168H184L96 16ZM80 120V80H112L100 108H116L92 152V120H80Z"],
     viewBox: "0 0 192 192",
