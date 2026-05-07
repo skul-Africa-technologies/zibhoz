@@ -3,6 +3,7 @@ import { View, Text, Pressable, SafeAreaView, StyleSheet, AccessibilityInfo } fr
 import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
 import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCommands";
+const VOICE_COMMAND_RETRY_DELAY_MS = 900;
 
 const WALLETS = [
   { id: "phantom", label: "Phantom Wallet", icon: "ghost", sub: "Solana-native · Fast setup", tag: "POPULAR" },
@@ -26,8 +27,13 @@ export default function WalletScreen({ onConnect }) {
       return false;
     }
     setHeardCommand(command);
-    if (command.includes("phantom") || command.includes("wallet")) {
-      AccessibilityInfo.announceForAccessibility("Wallet selected. Opening main screen.");
+    if (command.includes("phantom")) {
+      AccessibilityInfo.announceForAccessibility("Phantom selected. Opening main screen.");
+      onConnect();
+      return true;
+    }
+    if (command.includes("wallet connect") || command.includes("walletconnect")) {
+      AccessibilityInfo.announceForAccessibility("WalletConnect selected. Opening main screen.");
       onConnect();
       return true;
     }
@@ -45,11 +51,11 @@ export default function WalletScreen({ onConnect }) {
       onResult: (command) => {
         setListening(false);
         const done = handleWalletVoice(command);
-        if (!done) setTimeout(startWalletPrompt, 900);
+        if (!done) setTimeout(startWalletPrompt, VOICE_COMMAND_RETRY_DELAY_MS);
       },
       onError: () => {
         setListening(false);
-        setTimeout(startWalletPrompt, 900);
+        setTimeout(startWalletPrompt, VOICE_COMMAND_RETRY_DELAY_MS);
       },
       onEnd: () => setListening(false),
     });

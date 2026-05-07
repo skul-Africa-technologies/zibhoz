@@ -3,6 +3,7 @@ import { View, Text, Pressable, SafeAreaView, StyleSheet, AccessibilityInfo } fr
 import colors from "../theme/colors";
 import SvgIcon from "../components/SvgIcon";
 import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCommands";
+const VOICE_COMMAND_RETRY_DELAY_MS = 900;
 
 const FEATURES = [
   { icon: "voiceOrb", title: "Voice Markets", desc: "Speak to discover & explore markets hands-free" },
@@ -40,11 +41,11 @@ export default function OnboardScreen({ onNext }) {
       onResult: (command) => {
         setListening(false);
         const done = handleVoiceCommand(command);
-        if (!done) setTimeout(startVoicePrompt, 900);
+        if (!done) setTimeout(startVoicePrompt, VOICE_COMMAND_RETRY_DELAY_MS);
       },
       onError: () => {
         setListening(false);
-        setTimeout(startVoicePrompt, 900);
+        setTimeout(startVoicePrompt, VOICE_COMMAND_RETRY_DELAY_MS);
       },
       onEnd: () => setListening(false),
     });

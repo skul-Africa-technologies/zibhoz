@@ -39,14 +39,20 @@ const VOICE = {
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
   error:      { label: "Couldn't hear you",     color: "#F6465D",         sub: "Listening again in a moment"   },
 };
+const VOICE_FALLBACK_COMMAND = "show me markets";
+// Delay before re-starting the next automatic voice prompt.
+const AUTO_PROMPT_DELAY_MS = 900;
+// Slightly longer delay for non-web voice-recognition fallback mode.
+const AUTO_PROMPT_FALLBACK_DELAY_MS = 1500;
 
 function resolveVoiceIntent(command) {
-  if (command.includes("portfolio")) return { type: "portfolio" };
-  if (command.includes("history") || command.includes("chat")) return { type: "chat" };
-  if (command.includes("setting")) return { type: "settings" };
-  if (command.includes("menu")) return { type: "menu" };
-  if (command.includes("trade")) return { type: "trade" };
-  if (command.includes("market") || command.includes("btc")) return { type: "market" };
+  const hasWord = (word) => new RegExp(`\\b${word}\\b`, "i").test(command);
+  if (hasWord("portfolio")) return { type: "portfolio" };
+  if (hasWord("history") || hasWord("chat")) return { type: "chat" };
+  if (hasWord("settings") || hasWord("setting")) return { type: "settings" };
+  if (hasWord("menu")) return { type: "menu" };
+  if (hasWord("trade")) return { type: "trade" };
+  if (hasWord("market") || hasWord("markets") || hasWord("btc")) return { type: "market" };
   return { type: "unknown" };
 }
 
@@ -366,9 +372,10 @@ export default function MainAppScreen() {
 
   const msgCounter = useRef(CHAT.length);
   const stopListeningRef = useRef(null);
+  const autoPromptRef = useRef(() => {});
 
   const runResolvedIntent = useCallback((commandText) => {
-    const command = (commandText || "show me btc market odds").toLowerCase();
+    const command = (commandText || VOICE_FALLBACK_COMMAND).toLowerCase();
     const intent = resolveVoiceIntent(command);
     setVoicePhase("speaking");
 
@@ -439,7 +446,7 @@ export default function MainAppScreen() {
     stopListeningRef.current?.();
     AccessibilityInfo.announceForAccessibility("What would you like to do?");
     setVoicePhase("listening");
-    const fallbackCommand = "show me btc market odds";
+    const fallbackCommand = VOICE_FALLBACK_COMMAND;
 
     if (isVoiceRecognitionSupported()) {
       stopListeningRef.current = listenForCommand({
@@ -470,11 +477,16 @@ export default function MainAppScreen() {
   }, [voicePhase, confirmTrade, txResult, runResolvedIntent]);
 
   useEffect(() => {
-    if (voicePhase === "idle" && !confirmTrade && !txResult) {
-      const timer = setTimeout(() => handleMicPress(), 900);
+    autoPromptRef.current = handleMicPress;
+  }, [handleMicPress]);
+
+  useEffect(() => {
+    if (voicePhase === "idle" && !confirmTrade && !txResult && !drawer) {
+      const delay = isVoiceRecognitionSupported() ? AUTO_PROMPT_DELAY_MS : AUTO_PROMPT_FALLBACK_DELAY_MS;
+      const timer = setTimeout(() => autoPromptRef.current(), delay);
       return () => clearTimeout(timer);
     }
-  }, [voicePhase, confirmTrade, txResult, handleMicPress]);
+  }, [voicePhase, confirmTrade, txResult, drawer]);
 
   useEffect(() => () => stopListeningRef.current?.(), []);
 

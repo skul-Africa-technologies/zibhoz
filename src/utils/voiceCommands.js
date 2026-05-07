@@ -36,11 +36,13 @@ export function listenForCommand({
 
   recognition.onstart = () => onStart?.();
   recognition.onresult = (event) => {
+    clearTimeout(stopTimer);
     settled = true;
     const transcript = event.results?.[0]?.[0]?.transcript?.trim() ?? "";
     onResult?.(transcript.toLowerCase());
   };
   recognition.onerror = (event) => {
+    clearTimeout(stopTimer);
     settled = true;
     onError?.(event);
   };

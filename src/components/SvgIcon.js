@@ -48,7 +48,7 @@ const ICONS = {
   },
 
   portfolio: {
-    fontIcon: "chart-pie",
+    fontIcon: "wallet-outline",
   },
 
   chat: {
