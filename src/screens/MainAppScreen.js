@@ -478,8 +478,8 @@ export default function MainAppScreen() {
 
   useEffect(() => {
     if (hasAutoStartedListeningRef.current) return;
-    if (voicePhase !== "idle" || confirmTrade || txResult) return;
     hasAutoStartedListeningRef.current = true;
+    if (voicePhase !== "idle" || confirmTrade || txResult) return;
     startListening();
   }, [voicePhase, confirmTrade, txResult, startListening]);
 
