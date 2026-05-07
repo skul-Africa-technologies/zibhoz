@@ -33,7 +33,7 @@ import { isVoiceRecognitionSupported, listenForCommand } from "../utils/voiceCom
    VOICE PHASE CONFIG
 ───────────────────────────────────────────── */
 const VOICE = {
-  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Speak your command anytime"              },
+  idle:       { label: "Ready to listen",       color: "#FFFFFF",         sub: "Listening starts automatically"              },
   listening:  { label: "Listening…",            color: colors.primary,    sub: "Go ahead, I'm ready"          },
   processing: { label: "Thinking…",             color: "#F7931A",         sub: "Fetching market data"          },
   speaking:   { label: "Speaking…",             color: "#0ECB81",         sub: "Playing voice response"        },
@@ -435,9 +435,7 @@ export default function MainAppScreen() {
     setTimeout(() => setVoicePhase("idle"), 1400);
   }, []);
 
-  /* ── Voice mic handler ── */
-  const handleMicPress = useCallback(() => {
-    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+  const startListening = useCallback(() => {
     setVoiceResult(null);
     stopListeningRef.current?.();
     AccessibilityInfo.announceForAccessibility("What would you like to do?");
@@ -470,13 +468,19 @@ export default function MainAppScreen() {
       setMessages(prev => [...prev, { id: `msg-${msgCounter.current}`, role: "user", text: fallbackCommand }]);
       setTimeout(() => runResolvedIntent(fallbackCommand), 900);
     }, 1200);
-  }, [voicePhase, confirmTrade, txResult, runResolvedIntent]);
+  }, [runResolvedIntent]);
+
+  /* ── Voice mic handler ── */
+  const handleMicPress = useCallback(() => {
+    if (voicePhase !== "idle" || confirmTrade || txResult) return;
+    startListening();
+  }, [voicePhase, confirmTrade, txResult, startListening]);
 
   useEffect(() => {
     if (hasAutoStartedListeningRef.current) return;
     hasAutoStartedListeningRef.current = true;
-    handleMicPress();
-  }, [handleMicPress]);
+    startListening();
+  }, [startListening]);
 
   useEffect(() => () => stopListeningRef.current?.(), []);
 
