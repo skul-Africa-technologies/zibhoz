@@ -516,7 +516,13 @@ export default function MainAppScreen() {
       {/* ── TOP BAR: just brand + status pill ── */}
       <View style={styles.topBar}>
         <View>
-          <Image source={require("../../assets/zibhoz.png")} style={styles.brandLogo} resizeMode="contain" />
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.brandLogo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.brandSub}>Voice-first prediction markets</Text>
         </View>
         <View style={[styles.statusPill, { borderColor: `${phase.color}60` }]}>
