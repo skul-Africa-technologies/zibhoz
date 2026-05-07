@@ -5,7 +5,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
@@ -20,7 +19,7 @@ async function bootstrap() {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           scriptSrc: ["'self'"],
-          imgSrc: ["'self'", "data:", "https:"],
+          imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
       crossOriginEmbedderPolicy: false,
@@ -29,7 +28,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT') || 3001;
-  const corsOrigin = configService.get<string>('CORS_ORIGIN') || 'http://localhost:3000';
+  const corsOrigin =
+    configService.get<string>('CORS_ORIGIN') || 'http://localhost:3000';
 
   app.enableCors({
     origin: corsOrigin,
@@ -52,18 +52,39 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('SkulAfrica API')
-    .setDescription('API documentation for SkulAfrica backend')
+    .setTitle('Zibhoz API')
+    .setDescription('Authentication and user management API')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'access-token',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'refresh-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: { persistAuthorization: true },
+  });
 
   await app.listen(PORT, '0.0.0.0');
   console.log(`Server running on http://localhost:${PORT}/api/v1`);
-  console.log(`Swagger docs available at http://localhost:${PORT}/api`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/api/docs`);
 }
 
 bootstrap();
