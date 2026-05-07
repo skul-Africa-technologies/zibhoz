@@ -476,7 +476,7 @@ export default function MainAppScreen() {
     if (hasAutoStartedListeningRef.current) return;
     hasAutoStartedListeningRef.current = true;
     handleMicPress();
-  }, [handleMicPress]);
+  }, []);
 
   useEffect(() => () => stopListeningRef.current?.(), []);
 
