@@ -1,0 +1,19 @@
+<svg width="47" height="24" viewBox="0 0 47 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<foreignObject x="0" y="0" width="47" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(32px);clip-path:url(#bgblur_0_30788_66771_clip_path);height:100%;width:100%"></div></foreignObject><g filter="url(#filter0_i_30788_66771)" data-figma-bg-blur-radius="64">
+<rect width="47" height="24" rx="12" fill="#121212"/>
+<rect x="0.5" y="0.5" width="46" height="23" rx="11.5" stroke="#121212"/>
+<path d="M12.996 16V7.06H14.172V14.92H18.096V16H12.996ZM19.2859 16V9.532H20.4019V16H19.2859ZM19.2859 8.5V7.06H20.4019V8.5H19.2859ZM22.1335 16V9.532H23.2255V10.792L23.0455 10.684C23.2055 10.276 23.4615 9.96 23.8135 9.736C24.1735 9.504 24.5935 9.388 25.0735 9.388C25.5375 9.388 25.9495 9.492 26.3095 9.7C26.6775 9.908 26.9655 10.196 27.1735 10.564C27.3895 10.932 27.4975 11.348 27.4975 11.812V16H26.3695V12.172C26.3695 11.812 26.3055 11.508 26.1775 11.26C26.0495 11.012 25.8655 10.82 25.6255 10.684C25.3935 10.54 25.1255 10.468 24.8215 10.468C24.5175 10.468 24.2455 10.54 24.0055 10.684C23.7735 10.82 23.5895 11.016 23.4535 11.272C23.3175 11.52 23.2495 11.82 23.2495 12.172V16H22.1335ZM29.0945 16V6.916H30.2105V13.144L29.7545 13.036L33.1865 9.532H34.6145L32.1305 12.136L34.7825 16H33.4625L31.0385 12.496L31.7345 12.46L29.8505 14.428L30.2105 13.612V16H29.0945Z" fill="white"/>
+</g>
+<defs>
+<filter id="filter0_i_30788_66771" x="0" y="0" width="47" height="24" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="1"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.08 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_30788_66771"/>
+</filter>
+<clipPath id="bgblur_0_30788_66771_clip_path" transform="translate(0 0)"><rect width="47" height="24" rx="12"/>
+</clipPath></defs>
+</svg>
