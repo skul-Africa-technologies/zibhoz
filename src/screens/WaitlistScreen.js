@@ -54,7 +54,13 @@ export default function WaitlistScreen() {
         {/* Brand */}
         <View style={styles.brandBlock}>
           <Text style={styles.kicker}>JOIN THE WAITLIST</Text>
-          <Image source={require("../../assets/zibhoz.png")} style={styles.logo} resizeMode="contain" />
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.logo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.tagline}>
             Voice-first prediction markets.{"\n"}Be first in line.
           </Text>

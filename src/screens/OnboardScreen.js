@@ -78,7 +78,13 @@ export default function OnboardScreen({ onNext }) {
         {/* Brand */}
         <View style={styles.brandBlock}>
           <Text style={styles.kicker}>VOICE-FIRST PREDICTION MARKETS</Text>
-          <Image source={require("../../assets/zibhoz.png")} style={styles.logo} resizeMode="contain" />
+          <Image
+            source={require("../../assets/zibhoz.png")}
+            style={styles.logo}
+            resizeMode="contain"
+            accessibilityRole="image"
+            accessibilityLabel="Zibhoz logo"
+          />
           <Text style={styles.tagline}>Trade with your voice.{"\n"}Built for everyone.</Text>
         </View>
 
