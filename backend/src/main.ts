@@ -1,25 +1,26 @@
 import "dotenv/config";
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const reflector = app.get(Reflector);
+
   app.set('trust proxy', 1);
 
+  // Relax CSP for Swagger UI (inline scripts/styles required)
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'https:'],
         },
       },
@@ -29,8 +30,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT') || 3001;
-  const corsOrigin =
-    configService.get<string>('CORS_ORIGIN') || 'http://localhost:3000';
+  const corsOrigin = configService.get<string>('CORS_ORIGIN') || 'http://localhost:3000';
 
   app.enableCors({
     origin: corsOrigin,
@@ -39,9 +39,14 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Get raw Express app and add /api routes BEFORE the global prefix is applied
+  // Raw Express routes BEFORE global prefix
   const rawExpressApp = app.getHttpAdapter().getInstance();
-  rawExpressApp.get('/api', (req: any, res: any) => {
+
+  rawExpressApp.get('/', (_req: any, res: any) => {
+    res.json({ status: 'ok' });
+  });
+
+  rawExpressApp.get('/api', (_req: any, res: any) => {
     res.json({
       name: 'Zibhoz API',
       version: '1.0',
@@ -55,7 +60,7 @@ async function bootstrap() {
     });
   });
 
-  rawExpressApp.get('/api/info', (req: any, res: any) => {
+  rawExpressApp.get('/api/info', (_req: any, res: any) => {
     res.json({
       name: 'Zibhoz API',
       version: '1.0',
@@ -78,7 +83,6 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));
 
-  
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Zibhoz API')
     .setDescription('Authentication and user management API')
